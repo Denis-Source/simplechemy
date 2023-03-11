@@ -12,7 +12,7 @@ class Entity(BaseModel):
     NAME = "entity model"
     logger = getLogger(NAME)
 
-    def __init__(self, name=None, generate_uuid=True, storage=None, save=True):
+    def __init__(self, name=None, generate_uuid=True, storage=None, to_save=True):
         if not storage:
             self.storage = config.get_storage()
         else:
@@ -28,7 +28,7 @@ class Entity(BaseModel):
         else:
             self.name = f"{self.NAME}-{self.uuid}"
 
-        if save:
+        if to_save:
             self.save()
 
     def save(self) -> None:
@@ -75,7 +75,7 @@ class Entity(BaseModel):
 
     def delete(self, storage=config.get_storage(), **kwargs) -> None:
         self.logger.debug(f"deleting instance ({self})")
-        self.delete(self)
+        storage.delete(self)
 
     def to_dict(self) -> dict:
         return {
