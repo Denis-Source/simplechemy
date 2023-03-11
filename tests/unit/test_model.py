@@ -14,17 +14,15 @@ class BaseTestModel:
     def uuid_regex(self):
         return r"^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$"
 
-    @pytest.fixture
-    def ordinary_name(self):
-        return "fine name"
-
     def test_model_created(self, uuid_regex):
         instance = self.model_cls(storage=self.storage)
         assert instance
         assert re.match(uuid_regex, instance.uuid)
         assert instance.name == f"{instance.NAME}-{instance.uuid}"
 
-    def test_model_name_specified(self, ordinary_name):
+    def test_model_name_specified(self):
+        ordinary_name = "Fine Name"
+
         instance = self.model_cls(
             name=ordinary_name,
             storage=self.storage
@@ -32,7 +30,9 @@ class BaseTestModel:
 
         assert instance.name == ordinary_name
 
-    def test_two_uuid_are_unique(self, ordinary_name):
+    def test_two_uuid_are_unique(self):
+        ordinary_name = "Fine Name"
+
         instance1 = self.model_cls(
             storage=self.storage,
             name=ordinary_name

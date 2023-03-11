@@ -53,3 +53,7 @@ class BaseTestModelInStorage(ABC):
     @abstractmethod
     def test_model_to_dict_conversion(self):
         raise NotImplementedError
+
+    @abstractmethod
+    def test_model_change(self):
+        raise NotImplementedError
