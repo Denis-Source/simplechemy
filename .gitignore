@@ -1,0 +1,16 @@
+# ignore virtual env
+venv
+
+# ingore env files
+.env
+
+# caches
+.pytest_cache
+__pycache__
+
+# ignore coverage
+htmlcov
+.coverage
+
+# env variables
+.env
