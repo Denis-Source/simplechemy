@@ -20,11 +20,11 @@ class InstanceDoesNotExist(Exception):
         self.model_cls = model_cls
 
     def __str__(self):
-        return f"model {self.model_cls.NAME} with {self.model_uuid} uuid does not exist"
+        return f"{self.model_cls.NAME} with {self.model_uuid} uuid does not exist"
 
 
 class BaseModel(ABC):
-    NAME = "base storage"
+    NAME = "base model"
     logger = getLogger(NAME)
 
     @classmethod

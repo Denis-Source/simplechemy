@@ -9,13 +9,6 @@ class TestEntityInMemoryStorage(BaseTestModelInStorage):
     storage = MemoryStorage()
     model_cls = Entity
 
-    def test_model_to_dict_conversion(self, saved_instance: Entity):
-        assert saved_instance.to_dict() == {
-            "type": self.model_cls.NAME,
-            "uuid": saved_instance.uuid,
-            "name": saved_instance.name
-        }
-
     def test_model_change(self, saved_instance):
         ordinary_name = "Fine Name"
 

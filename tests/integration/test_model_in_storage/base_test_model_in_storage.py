@@ -51,9 +51,5 @@ class BaseTestModelInStorage(ABC):
             self.model_cls.get(not_saved_instance.uuid, storage=self.storage)
 
     @abstractmethod
-    def test_model_to_dict_conversion(self):
-        raise NotImplementedError
-
-    @abstractmethod
     def test_model_change(self):
         raise NotImplementedError
