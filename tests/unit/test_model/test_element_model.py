@@ -11,8 +11,14 @@ class TestElementModel:
         assert element_one == element_two
 
     @pytest.fixture
+    def element_cls(self):
+        yield Element
+        Element.reset_all()
+
+    @pytest.fixture
     def element_names(self):
-        return ["Air", "Soil", "Water", "Fire"]
+        yield ["Air", "Soil", "Water", "Fire"]
+        Element.reset_all()
 
     def test_correct_amount_of_elements_created(self, element_names):
         for element_name in element_names:

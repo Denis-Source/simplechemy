@@ -29,6 +29,14 @@ class ElementAlreadyHasInvolvedRecipeException(ElementAlreadyHasRecipeException)
         return f"{self.element.NAME} {self.element} already has involved {self.recipe.NAME} {self.recipe}"
 
 
+class IncompleteElementContent(ElementException):
+    def __init__(self, source):
+        self.source = source
+
+    def __str__(self):
+        return f"incomplete element content from {self.source}"
+
+
 class Element:
     NAME = "element model"
     logger = getLogger(NAME)
@@ -63,6 +71,9 @@ class Element:
     def __eq__(self, other):
         return self.name == other.name
 
+    def __hash__(self):
+        return hash(self.name)
+
     @classmethod
     def get_element_count(cls):
         return len(cls._instances.values())
@@ -95,16 +106,18 @@ class Element:
 
     @classmethod
     def load_from_txt(cls, filepath: str):
+        cls.reset_all()
         cls.logger.debug(f"loading {cls.NAME} from .txt file")
 
         with open(filepath, "r") as f:
             lines = f.readlines()
-        total_lines = len(lines)
+
+        total_elements = len(set([line.split("=")[0].strip() for line in lines]))
 
         # starting elements
         cls.logger.debug(f"loading starting elements")
         for line in lines:
-            if line.count(" ") == 0:
+            if line.count("=") == 0:
                 Element(
                     name=line.strip(),
                     starting=True,
@@ -114,9 +127,11 @@ class Element:
         cls.logger.debug(f"loaded ({Element.get_element_count()}) starting elements")
         cls.logger.debug(f"loading secondary elements")
         # secondary element
-        while Element.get_element_count() != total_lines:
+
+        while Element.get_element_count() != total_elements:
+            previous_count = cls.get_element_count()
             for line in lines:
-                if line.count(" ") == 0:
+                if line.count("=") == 0:
                     continue
 
                 result_name = line.split("=")[0].strip()
@@ -134,6 +149,8 @@ class Element:
                             involved_element.add_involved_recipe(recipe)
                         except ElementAlreadyHasInvolvedRecipeException:
                             pass
+            if previous_count == cls.get_element_count():
+                raise IncompleteElementContent(filepath)
 
         cls.logger.debug(f"loaded total: ({Element.get_element_count()}) elements")
         return Element.list()
