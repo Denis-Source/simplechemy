@@ -2,6 +2,7 @@ from random import shuffle
 
 import pytest
 
+import config
 from models.element import Element, IncompleteElementContent
 
 
@@ -39,7 +40,6 @@ class TestElementsAndRecipes:
     @pytest.fixture
     def incomplete_mock_recipes(self, mock_recipes):
         return mock_recipes[0] + \
-               "Plunger = Rubber + Stick + Vacuum\n" \
                "Puddle = Road + Water\n", mock_recipes[1] + 2
 
     @pytest.fixture
@@ -56,7 +56,6 @@ class TestElementsAndRecipes:
             f.write(mock_recipes_with_more_than_one_option[0])
 
         return filepath, mock_recipes_with_more_than_one_option[1]
-
 
     @pytest.fixture
     def incomplete_mock_txt_file_with_recipes(self, incomplete_mock_recipes, tmpdir):
@@ -100,10 +99,39 @@ class TestElementsAndRecipes:
         with pytest.raises(IncompleteElementContent):
             element_cls.load_from_txt(incomplete_mock_txt_file_with_recipes)
 
-    def test_elements_can_have_two_or_more_recipes(self, element_cls, mock_txt_file_with_recipes_with_more_than_one_option):
+    def test_elements_can_have_two_or_more_recipes(self, element_cls,
+                                                   mock_txt_file_with_recipes_with_more_than_one_option):
         filepath, correct_amount = mock_txt_file_with_recipes_with_more_than_one_option
 
         elements = element_cls.load_from_txt(filepath)
         assert len(elements) == correct_amount
         assert element_cls.get_element_count() == correct_amount
 
+    def test_if_element_content_path(self, element_cls):
+        filepath = config.get_element_content_path()
+        element_cls.load_from_txt(filepath)
+        assert element_cls.list()
+
+    def check_obtainability(self, element: Element, obtainability_dict: dict = None):
+        if element.starting:
+            status = True
+            obtainability_dict[element] = status
+            return status
+        else:
+            status = all(
+                all(self.check_obtainability(recipe_element, obtainability_dict)
+                    for recipe_element in recipe.schema)
+                for recipe in element.recipes)
+            obtainability_dict[element] = status
+            return status
+
+    def test_if_all_elements_in_content_path_obtainable(self, element_cls):
+        filepath = config.get_element_content_path()
+        element_cls.load_from_txt(filepath)
+
+        obtain_dict = {}
+
+        for element in element_cls.list():
+            self.check_obtainability(element, obtain_dict)
+
+        assert all([obtain_dict.values()])
