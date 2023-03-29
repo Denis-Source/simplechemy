@@ -92,3 +92,14 @@ class TestElementPositionModel(TestEntityModel):
                     user=user_instance,
                     is_done=False
                 )
+
+    def test_correct_dict(self, model_instance):
+        assert model_instance.to_dict() == {
+            "type": model_instance.NAME,
+            "name": model_instance.name,
+            "uuid": model_instance.uuid,
+            "carried_by": model_instance.carried_by,
+            "x": model_instance.x,
+            "y": model_instance.y,
+            "element": model_instance.element.name
+        }

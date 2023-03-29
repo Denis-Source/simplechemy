@@ -2,7 +2,7 @@ import pytest
 
 import config
 from models.element import Element
-from models.element_position import ElementPosition
+from models.element_position import ElementPosition, ElementPositionWrongGame
 from models.game import Game
 from models.user import User
 from storage.memory import MemoryStorage
@@ -35,6 +35,19 @@ class TestGameLogic:
             creator_user=saved_user,
             storage=self.storage
         )
+        saved_user.enter_game(instance)
+
+        yield instance
+
+        instance.delete()
+
+    @pytest.fixture
+    def another_saved_instance(self, saved_user, element_cls, saved_instance):
+        instance = Game(
+            creator_user=saved_user,
+            storage=self.storage
+        )
+        saved_user.leave_game(saved_instance)
         saved_user.enter_game(instance)
 
         yield instance
@@ -90,7 +103,8 @@ class TestGameLogic:
             x=0.3,
             y=0.3,
             user=saved_user,
-            is_done=True
+            is_done=True,
+
         )
 
         element_p = self.storage.get(ElementPosition, element_p.uuid)
@@ -122,18 +136,48 @@ class TestGameLogic:
             )
 
         result_ep, used_elements_p = saved_instance.move_element_p(
-                element_p=element_ps[-1],
-                x=0.3,
-                y=0.3,
-                user=saved_user,
-                is_done=True
-            )
+            element_p=element_ps[-1],
+            x=0.3,
+            y=0.3,
+            user=saved_user,
+            is_done=True
+        )
 
         assert result_ep
         assert result_ep.element == obtainable_element
         assert set(used_elements_p) == set(element_ps)
 
+    def test_if_unlocked_elements_correct(self, element_cls, saved_instance):
+        assert set(saved_instance.unlocked_elements) == set(element_cls.list(starting=True))
 
+    def test_if_game_can_be_completed(self, element_cls, saved_instance, saved_user):
+        for element in saved_instance.unlocked_elements:
+            for recipy in element.involved_recipes:
+                if all([r_elem in saved_instance.unlocked_elements for r_elem in recipy.schema]):
+                    ep = [saved_instance.add_element_p(
+                        r_elem
+                    ) for r_elem in recipy.schema]
 
+                    result, ele = saved_instance.move_element_p(
+                        element_p=ep[-1],
+                        user=saved_user,
+                        is_done=True,
+                        x=0,
+                        y=0
+                    )
+                    saved_instance.clear_elements_p()
 
+        assert set(saved_instance.unlocked_elements) == set(Element.list())
 
+    def test_move_element_p_but_wrong_game_uuid(self, starting_element, saved_instance, another_saved_instance,
+                                                saved_user):
+        element_p = saved_instance.add_element_p(starting_element)
+
+        with pytest.raises(ElementPositionWrongGame):
+            another_saved_instance.move_element_p(
+                element_p=element_p,
+                x=0.3,
+                y=0.3,
+                user=saved_user,
+                is_done=True
+            )

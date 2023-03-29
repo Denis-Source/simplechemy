@@ -16,12 +16,22 @@ class ElementPositionOutOfBounds(ElementPositionException):
         return f"{self.element_position} is out of bounds"
 
 
+class ElementPositionWrongGame(ElementPositionException):
+    def __init__(self, element_position, game):
+        self.element_position = element_position
+        self.game = game
+
+    def __str__(self):
+        return f"{self.element_position} is related to other game"
+
+
 class ElementPosition(Entity):
     BOUNDS = 0, 1
 
     NAME = "elem_p model"
 
-    def __init__(self, element: Element, x: int, y: int, game=None, to_save=True, storage=config.get_storage(), **kwargs):
+    def __init__(self, element: Element, x: int, y: int, game=None, to_save=True, storage=config.get_storage(),
+                 **kwargs):
         super().__init__(to_save=False, **kwargs)
 
         self.element = element
@@ -48,3 +58,13 @@ class ElementPosition(Entity):
 
         if to_save:
             self.save()
+
+    def to_dict(self) -> dict:
+        dict_ = super().to_dict()
+        dict_.update({
+            "carried_by": self.carried_by,
+            "x": self.x,
+            "y": self.y,
+            "element": self.element.name
+        })
+        return dict_
