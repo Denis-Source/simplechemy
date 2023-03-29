@@ -6,21 +6,27 @@ from models.recipe import Recipe
 
 class TestRecipeModel:
     @pytest.fixture
-    def element_one(self):
-        return Element(
+    def element_cls(self):
+        yield Element
+        Element.reset_all()
+
+
+    @pytest.fixture
+    def element_one(self, element_cls):
+        return element_cls(
             "Air",
             starting=True,
         )
 
     @pytest.fixture
-    def element_two(self):
-        return Element(
+    def element_two(self, element_cls):
+        return element_cls(
             "Water",
             starting=True
         )
 
-    def test_equal_recipes(self, element_one, element_two):
-        result_element = Element("Cloud")
+    def test_equal_recipes(self, element_one, element_two, element_cls):
+        result_element = element_cls("Cloud")
         recipe_one = Recipe(
             result=result_element,
             schema=[element_one, element_two]
@@ -34,8 +40,8 @@ class TestRecipeModel:
         assert recipe_one == recipe_two
         assert recipe_one.schema == recipe_two.schema
 
-    def test_different_recipes(self, element_one, element_two):
-        result_element = Element("Cloud")
+    def test_different_recipes(self, element_one, element_two, element_cls):
+        result_element = element_cls("Cloud")
 
         recipe_one = Recipe(
             result=result_element,

@@ -3,7 +3,7 @@ from random import shuffle
 import pytest
 
 import config
-from models.element import Element, IncompleteElementContent
+from models.element import Element, IncompleteElementContent, IncorrectElementRecipe
 
 
 class TestElementsAndRecipes:
@@ -107,10 +107,31 @@ class TestElementsAndRecipes:
         assert len(elements) == correct_amount
         assert element_cls.get_element_count() == correct_amount
 
-    def test_if_element_content_path(self, element_cls):
+    def test_if_element_content_path_correct(self, element_cls):
         filepath = config.get_element_content_path()
         element_cls.load_from_txt(filepath)
         assert element_cls.list()
+
+    def test_correct_recipe(self, element_cls, mock_txt_file_with_recipes):
+        element_cls.load_from_txt(mock_txt_file_with_recipes[0])
+        recipe_elements = [element_cls.get("Fire"), element_cls.get("Stone")]
+        correct_element = element_cls.get("Metal")
+
+        assert element_cls.get_result(recipe_elements) == correct_element
+
+    def test_incorrect_recipe(self, element_cls, mock_txt_file_with_recipes):
+        element_cls.load_from_txt(mock_txt_file_with_recipes[0])
+        recipe_elements = [element_cls.get("Fire"), element_cls.get("Bird")]
+
+        with pytest.raises(IncorrectElementRecipe):
+            element_cls.get_result(recipe_elements)
+
+    def test_correct_recipe_incorrect_result(self, element_cls, mock_txt_file_with_recipes):
+        element_cls.load_from_txt(mock_txt_file_with_recipes[0])
+        recipe_elements = [element_cls.get("Fire"), element_cls.get("Stone")]
+        correct_element = element_cls.get("Bird")
+
+        assert element_cls.get_result(recipe_elements) != correct_element
 
     def check_obtainability(self, element: Element, obtainability_dict: dict = None):
         if element.starting:

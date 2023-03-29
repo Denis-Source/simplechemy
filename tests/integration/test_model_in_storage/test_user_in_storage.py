@@ -3,10 +3,10 @@ import pytest
 from models.game import Game
 from models.user import User
 from storage.memory import MemoryStorage
-from tests.integration.test_model_in_storage.base_test_model_in_storage import BaseTestModelInStorage
+from tests.integration.test_model_in_storage.test_entity_in_storage import TestEntityInMemoryStorage
 
 
-class TestUserInMemoryStorage(BaseTestModelInStorage):
+class TestUserInMemoryStorage(TestEntityInMemoryStorage):
     storage = MemoryStorage()
     model_cls = User
 

@@ -18,11 +18,10 @@ class TestElementModel:
     @pytest.fixture
     def element_names(self):
         yield ["Air", "Soil", "Water", "Fire"]
-        Element.reset_all()
 
-    def test_correct_amount_of_elements_created(self, element_names):
+    def test_correct_amount_of_elements_created(self, element_names, element_cls):
         for element_name in element_names:
             for _ in range(10):
-                e = Element(element_name)
+                e = element_cls(element_name)
 
-        assert Element.get_element_count() == len(element_name)
+        assert element_cls.get_element_count() == len(element_name)

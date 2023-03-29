@@ -22,7 +22,7 @@ class MemoryStorage(BaseStorage):
 
     def put(self, instance) -> None:
         self.logger.debug(f"putting {instance} in {self}")
-        self._dict[instance.uuid] = deepcopy(instance)
+        self._dict[instance.uuid] = instance
 
     def delete(self, instance) -> None:
         self.logger.debug(f"deleting {instance} from {self}")

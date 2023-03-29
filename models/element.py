@@ -37,10 +37,21 @@ class IncompleteElementContent(ElementException):
         return f"incomplete element content from {self.source}"
 
 
+class IncorrectElementRecipe(ElementException):
+    def __init__(self, elements):
+        self.elements = elements
+
+    def __str__(self):
+        return f"element cannot be obtained with {[str(element) for element in self.elements]}"
+
+
 class Element:
     NAME = "element model"
     logger = getLogger(NAME)
+
     _instances = {}
+    _recipes = {}
+    _starting = []
 
     def __init__(self, name: str, starting=False, recipe: List[Recipe] = None, recipes: List[Recipe] = None):
         instance = self._instances.get(name)
@@ -74,6 +85,9 @@ class Element:
     def __hash__(self):
         return hash(self.name)
 
+    def __lt__(self, other):
+        return str(self) < str(other)
+
     @classmethod
     def get_element_count(cls):
         return len(cls._instances.values())
@@ -87,21 +101,35 @@ class Element:
         self.logger.debug(f"adding {recipe.NAME} ({recipe}) for {self.NAME} {self}")
         if recipe not in self.recipes:
             self.recipes.append(recipe)
+            recipe_key = tuple(sorted(recipe.schema))
+            self._recipes[recipe_key] = self
         else:
             self.logger.debug(f"{self.NAME} {self} already has {recipe.NAME} ({recipe})")
             raise ElementAlreadyHasRecipeException(self, recipe)
 
     def add_involved_recipe(self, recipe: Recipe):
         self.logger.debug(f"adding involved {recipe.NAME} ({recipe}) for {self.NAME} {self}")
-        if not recipe in self.involved_recipes:
+        if recipe not in self.involved_recipes:
             self.involved_recipes.append(recipe)
         else:
             self.logger.debug(f"{self.NAME} {self} already has involved {recipe.NAME} ({recipe})")
             raise ElementAlreadyHasInvolvedRecipeException(self, recipe)
 
     @classmethod
-    def list(cls):
+    def get_result(cls, elements):
+        recipe_key = tuple(sorted(elements))
+        result = cls._recipes.get(recipe_key)
+        if not result:
+            raise IncorrectElementRecipe(elements)
+
+        return result
+
+    @classmethod
+    def list(cls, starting=False):
         cls.logger.debug(f"listing {cls.NAME} instances")
+
+        if starting:
+            return cls._starting
         return list(cls._instances.values())
 
     @classmethod
@@ -118,12 +146,14 @@ class Element:
         cls.logger.debug(f"loading starting elements")
         for line in lines:
             if line.count("=") == 0:
-                Element(
+                element = Element(
                     name=line.strip(),
                     starting=True,
                     recipes=[],
                     recipe=None
                 )
+                cls._starting.append(element)
+
         cls.logger.debug(f"loaded ({Element.get_element_count()}) starting elements")
         cls.logger.debug(f"loading secondary elements")
 
@@ -158,3 +188,5 @@ class Element:
     @classmethod
     def reset_all(cls):
         cls._instances = {}
+        cls._recipes = {}
+        cls._starting = []

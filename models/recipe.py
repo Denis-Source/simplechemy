@@ -16,3 +16,6 @@ class Recipe:
 
     def __eq__(self, other):
         return self.schema == other.schema
+
+    def __hash__(self):
+        return hash(str(self))

@@ -41,6 +41,9 @@ class Entity(BaseModel):
     def __str__(self):
         return f"{self.NAME}-{self.uuid}"
 
+    def __hash__(self):
+        return hash(str(self))
+
     @classmethod
     def from_data(cls, uuid, name, storage=config.get_storage(), **kwargs) -> Entity:
         cls.logger.debug(f"constructing {cls.NAME} from data")
