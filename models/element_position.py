@@ -16,15 +16,6 @@ class ElementPositionOutOfBounds(ElementPositionException):
         return f"{self.element_position} is out of bounds"
 
 
-class ElementPositionWrongGame(ElementPositionException):
-    def __init__(self, element_position, game):
-        self.element_position = element_position
-        self.game = game
-
-    def __str__(self):
-        return f"{self.element_position} is related to other game"
-
-
 class ElementPosition(Entity):
     BOUNDS = 0, 1
 

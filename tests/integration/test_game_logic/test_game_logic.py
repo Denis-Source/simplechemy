@@ -1,9 +1,9 @@
 import pytest
 
 import config
-from models.element import Element
-from models.element_position import ElementPosition, ElementPositionWrongGame
-from models.game import Game
+from models.element import Element, NotUnlockedElementException
+from models.element_position import ElementPosition
+from models.game import Game, ElementPNotInGameException
 from models.user import User
 from storage.memory import MemoryStorage
 
@@ -147,6 +147,16 @@ class TestGameLogic:
         assert result_ep.element == obtainable_element
         assert set(used_elements_p) == set(element_ps)
 
+    def test_locked_element_created(self, element_cls, saved_instance):
+        for e in element_cls.list():
+            if e not in saved_instance.unlocked_elements:
+                with pytest.raises(NotUnlockedElementException):
+                    saved_instance.add_element_p(
+                        element=e,
+                        x=0,
+                        y=0
+                    )
+
     def test_if_unlocked_elements_correct(self, element_cls, saved_instance):
         assert set(saved_instance.unlocked_elements) == set(element_cls.list(starting=True))
 
@@ -154,12 +164,12 @@ class TestGameLogic:
         for element in saved_instance.unlocked_elements:
             for recipy in element.involved_recipes:
                 if all([r_elem in saved_instance.unlocked_elements for r_elem in recipy.schema]):
-                    ep = [saved_instance.add_element_p(
+                    eps = [saved_instance.add_element_p(
                         r_elem
                     ) for r_elem in recipy.schema]
 
                     result, ele = saved_instance.move_element_p(
-                        element_p=ep[-1],
+                        element_p=eps[-1],
                         user=saved_user,
                         is_done=True,
                         x=0,
@@ -173,7 +183,7 @@ class TestGameLogic:
                                                 saved_user):
         element_p = saved_instance.add_element_p(starting_element)
 
-        with pytest.raises(ElementPositionWrongGame):
+        with pytest.raises(ElementPNotInGameException):
             another_saved_instance.move_element_p(
                 element_p=element_p,
                 x=0.3,

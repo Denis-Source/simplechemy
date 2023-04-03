@@ -6,6 +6,14 @@ from typing import List
 from models.recipe import Recipe
 
 
+class ElementNotExistException(Exception):
+    def __init__(self, element_name):
+        self.element_name = element_name
+
+    def __str__(self):
+        return f"Element with name {self.element_name} does not exist"
+
+
 class ElementException(Exception):
     def __init__(self, element: Element, message: str):
         self.element = element
@@ -43,6 +51,14 @@ class IncorrectElementRecipe(ElementException):
 
     def __str__(self):
         return f"element cannot be obtained with {[str(element) for element in self.elements]}"
+
+
+class NotUnlockedElementException(ElementException):
+    def __init__(self, element):
+        self.element = element
+
+    def __str__(self):
+        return f"element ({self.element}) is not unlocked"
 
 
 class Element:
@@ -95,7 +111,10 @@ class Element:
     @classmethod
     def get(cls, name):
         cls.logger.debug(f"getting {cls.NAME} {name}")
-        return cls._instances.get(name)
+        instance = cls._instances.get(name)
+        if not instance:
+            raise ElementNotExistException(name)
+        return instance
 
     def add_recipe(self, recipe: Recipe):
         self.logger.debug(f"adding {recipe.NAME} ({recipe}) for {self.NAME} {self}")
@@ -134,6 +153,7 @@ class Element:
 
     @classmethod
     def load_from_txt(cls, filepath: str):
+        # TODO REFACTOR
         cls.reset_all()
         cls.logger.debug(f"loading {cls.NAME} from .txt file")
 
@@ -166,7 +186,12 @@ class Element:
 
                 result_name = line.split("=")[0].strip()
                 recipe_names = [recipe_name.strip() for recipe_name in line.split("=")[1].strip().split("+")]
-                if all([Element.get(element_name) for element_name in recipe_names]):
+                try:
+                    all_there = all([Element.get(element_name) for element_name in recipe_names])
+                except ElementNotExistException:
+                    all_there = False
+
+                if all_there:
                     new_element = Element(result_name, recipe=None)
                     recipe = Recipe(result=new_element,
                                     schema=[Element.get(element_name) for element_name in recipe_names])

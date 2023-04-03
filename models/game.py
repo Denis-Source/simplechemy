@@ -1,9 +1,23 @@
 from logging import getLogger
 
 import config
-from models.element import Element, IncorrectElementRecipe
-from models.element_position import ElementPosition, ElementPositionWrongGame
+from models.base import ModelException
+from models.element import Element, IncorrectElementRecipe, NotUnlockedElementException
+from models.element_position import ElementPosition
 from models.entity import Entity
+
+
+class GameException(ModelException):
+    pass
+
+
+class ElementPNotInGameException(GameException):
+    def __init__(self, game, element_p):
+        self.game = game
+        self.element_p = element_p
+
+    def __str__(self):
+        return f"{ElementPosition.NAME} {self.element_p} not in {self.game}"
 
 
 class Game(Entity):
@@ -49,6 +63,10 @@ class Game(Entity):
 
     def add_element_p(self, element, x=0, y=0):
         self.logger.debug(f"adding {ElementPosition.NAME} to {self}")
+
+        if element not in self.unlocked_elements:
+            raise NotUnlockedElementException(element)
+
         element_p = ElementPosition(
             element=element,
             x=x,
@@ -61,11 +79,14 @@ class Game(Entity):
 
     def remove_element_p(self, element_p):
         self.logger.debug(f"removing {element_p} from {self}")
-        self.element_positions.remove(element_p)
+        if element_p in self.element_positions:
+            self.element_positions.remove(element_p)
+        else:
+            raise ElementPNotInGameException(element_p)
 
     def move_element_p(self, element_p, x, y, user, is_done):
-        if element_p.game_uuid != self.uuid:
-            raise ElementPositionWrongGame(element_p, self)
+        if element_p not in self.element_positions:
+            raise ElementPNotInGameException(self, element_p)
 
         self.logger.debug(f"moving {element_p} in {self} by {user}")
         element_p.move_to(
@@ -78,13 +99,13 @@ class Game(Entity):
         if is_done:
             try:
                 self.logger.debug(f"attempting to craft a new element")
-                return self.craft_new_element(element_p, x, y)
+                return self._craft_new_element(element_p, x, y)
             except IncorrectElementRecipe:
                 self.logger.debug(f"not a valid recipe")
                 return None, []
 
-    def craft_new_element(self, element_p, x, y):
-        result_element, used_elements_p = self.search_within_range(element_p)
+    def _craft_new_element(self, element_p, x, y):
+        result_element, used_elements_p = self._search_within_range(element_p)
 
         self.logger.info(f"element crafted ({result_element})")
         if result_element not in self.unlocked_elements:
@@ -105,7 +126,7 @@ class Game(Entity):
 
         return new_element_p, used_elements_p
 
-    def search_within_range(self, element_p):
+    def _search_within_range(self, element_p):
         self.logger.debug(f"searching near elements")
         close_elements_p = []
         for other_element_p in self.element_positions:
