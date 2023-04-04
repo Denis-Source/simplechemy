@@ -3,8 +3,8 @@ from logging import getLogger
 
 import config
 from models.base import ModelException
-from models.entity import Entity
-from models.game import Game
+from models.nonfungeble.entity import Entity
+from models.nonfungeble.game import Game
 
 
 class UserException(ModelException):
@@ -27,7 +27,7 @@ class User(Entity):
 
     def __init__(self, name: str = None, plain_password: str = None, to_save=True, storage=config.get_storage(),
                  **kwargs):
-        super().__init__(name=name, to_save=False, **kwargs)
+        super().__init__(name=name, **kwargs)
 
         if plain_password:
             self.password = self.hash_password(plain_password)
@@ -36,8 +36,11 @@ class User(Entity):
 
         self.game_uuid = None
 
-        if to_save:
-            self.save()
+    def change(self, name, plain_password=None, to_save=True, **kwargs) -> None:
+        if plain_password:
+            self.password = self.hash_password(plain_password)
+
+        super().change(name, to_save=to_save, **kwargs)
 
     @staticmethod
     def hash_password(plain_password: str) -> bytes:
@@ -53,15 +56,11 @@ class User(Entity):
     def enter_game(self, game: Game) -> None:
         self.logger.debug(f"{self.NAME} {self} entering {Game.NAME} {game}")
 
-        if self.game_uuid == game.uuid:
-            raise UserAlreadyInGameException(self)
-
         if self.game_uuid:
-            self.leave_game()
+            raise UserAlreadyInGameException(self)
 
         game.add_user(self)
         self.game_uuid = game.uuid
-        self.save()
 
     def leave_game(self, game):
         self.logger.debug(f"{self.NAME} {self} leaving {Game.NAME}")
@@ -71,7 +70,6 @@ class User(Entity):
 
         game.remove_user(self)
         self.game_uuid = None
-        self.save()
 
     def to_dict(self) -> dict:
         dict_ = super().to_dict()

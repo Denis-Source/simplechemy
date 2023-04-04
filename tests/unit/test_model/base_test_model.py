@@ -8,7 +8,6 @@ from storage.memory import MemoryStorage
 
 class BaseTestModel(ABC):
     model_cls = None
-    storage = MemoryStorage()
 
     @pytest.fixture
     def uuid_regex(self):
@@ -16,11 +15,11 @@ class BaseTestModel(ABC):
 
     @pytest.fixture
     def model_instance(self):
-        return self.model_cls(storage=self.storage)
+        return self.model_cls()
 
     @pytest.fixture
     def another_model_instance(self):
-        return self.model_cls(storage=self.storage)
+        return self.model_cls()
 
     def test_model_created(self, uuid_regex, model_instance):
         assert model_instance

@@ -1,8 +1,8 @@
 from dataclasses import dataclass
 
-from models.game import Game
-from models.user import User
-from service.events.base_events import ModelEvent
+from models.nonfungeble.game import Game
+from models.nonfungeble.user import User
+from services.events.base_events import ModelEvent
 
 
 @dataclass
@@ -32,7 +32,9 @@ class UserLeftGameEvent(UserEvent):
 class UserNotInGameEvent(UserEvent):
     instance: User
 
-# 
-# class UserChangePasswordCommand(UserCommand):
-#     # TODO
-#     user: User
+
+@dataclass
+class UserVerifiedPassword(UserEvent):
+    instance: User
+    plain_password: str
+    is_correct: bool

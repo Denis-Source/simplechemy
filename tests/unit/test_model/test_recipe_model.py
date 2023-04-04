@@ -1,7 +1,7 @@
 import pytest
 
-from models.element import Element
-from models.recipe import Recipe
+from models.fungeble.element import Element
+from models.fungeble.recipe import Recipe
 
 
 class TestRecipeModel:
@@ -9,7 +9,6 @@ class TestRecipeModel:
     def element_cls(self):
         yield Element
         Element.reset_all()
-
 
     @pytest.fixture
     def element_one(self, element_cls):

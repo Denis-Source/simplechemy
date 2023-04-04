@@ -2,9 +2,9 @@ from logging import getLogger
 
 import config
 from models.base import ModelException
-from models.element import Element, IncorrectElementRecipe, NotUnlockedElementException
-from models.element_position import ElementPosition
-from models.entity import Entity
+from models.fungeble.element import Element, IncorrectElementRecipe, NotUnlockedElementException
+from models.nonfungeble.element_position import ElementPosition
+from models.nonfungeble.entity import Entity
 
 
 class GameException(ModelException):
@@ -26,17 +26,14 @@ class Game(Entity):
 
     CRAFTING_RANGE = 0.05
 
-    def __init__(self, creator_user, name: str = None, to_save=True, storage=config.get_storage(),
+    def __init__(self, creator_user, name: str = None,
                  **kwargs):
-        super().__init__(name=name, to_save=False, **kwargs)
+        super().__init__(name=name, **kwargs)
 
         self.creator_uuid = creator_user.uuid
         self.users = []
         self.element_positions = []
         self.unlocked_elements = Element.list(starting=True)
-
-        if to_save:
-            self.save()
 
     def __contains__(self, user):
         return user in self.users
@@ -54,12 +51,10 @@ class Game(Entity):
     def add_user(self, user) -> None:
         self.logger.debug(f"adding {user.NAME} {user} to {self.NAME} {self}")
         self.users.append(user)
-        self.save()
 
     def remove_user(self, user) -> None:
         self.logger.debug(f"removing {user.NAME} {user} from {self.NAME} {self}")
         self.users.remove(user)
-        self.save()
 
     def add_element_p(self, element, x=0, y=0):
         self.logger.debug(f"adding {ElementPosition.NAME} to {self}")
@@ -74,7 +69,6 @@ class Game(Entity):
             game=self
         )
         self.element_positions.append(element_p)
-        self.save()
         return element_p
 
     def remove_element_p(self, element_p):
@@ -116,7 +110,6 @@ class Game(Entity):
             element=result_element,
             x=x,
             y=y,
-            storage=element_p.storage,
             game=self
         )
 

@@ -29,4 +29,7 @@ class MemoryStorage(BaseStorage):
         try:
             self._dict.pop(instance.uuid)
         except KeyError:
-            return None
+            return
+
+    def reset(self) -> None:
+        self._dict = {}

@@ -2,10 +2,16 @@ from __future__ import annotations
 
 from logging import getLogger
 
+from models.base import BaseModel
 
-class Recipe:
+
+class Recipe(BaseModel):
     NAME = "recipe model"
     logger = getLogger(NAME)
+
+    @classmethod
+    def from_data(cls, **kwargs) -> Recipe:
+        pass
 
     def __init__(self, result, schema):
         self.schema = schema

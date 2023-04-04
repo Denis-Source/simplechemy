@@ -1,9 +1,9 @@
 from dataclasses import dataclass
 
-from models.element import Element
-from models.element_position import ElementPosition
-from models.game import Game
-from service.events.base_events import ModelEvent
+from models.fungeble.element import Element
+from models.nonfungeble.element_position import ElementPosition
+from models.nonfungeble.game import Game
+from services.events.base_events import ModelEvent
 
 
 @dataclass

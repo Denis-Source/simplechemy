@@ -1,6 +1,6 @@
 import pytest
 
-from models.element import Element
+from models.fungeble.element import Element
 
 
 class TestElementModel:

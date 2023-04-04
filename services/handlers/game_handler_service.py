@@ -1,15 +1,16 @@
 import logging
 from typing import Union
 
-from models.element import Element, NotUnlockedElementException, ElementNotExistException
-from models.element_position import ElementPosition
-from models.game import Game, ElementPNotInGameException
-from models.user import User
-from service.commands.game_commands import GameAddElementPCommand, GameRemoveElementPCommand, GameMoveElementPCommand, \
+import config
+from models.fungeble.element import Element, NotUnlockedElementException, ElementNotExistException
+from models.nonfungeble.element_position import ElementPosition
+from models.nonfungeble.game import Game, ElementPNotInGameException
+from models.nonfungeble.user import User
+from services.commands.game_commands import GameAddElementPCommand, GameRemoveElementPCommand, GameMoveElementPCommand, \
     GameClearElementsPCommand
-from service.events.game_events import GameAddedElementPEvent, GameNotUnlockedElementEvent, GameElementNotExistEvent, \
+from services.events.game_events import GameAddedElementPEvent, GameNotUnlockedElementEvent, GameElementNotExistEvent, \
     GameRemovedElementPEvent, GameElementPNotInGameEvent, GameMovedElementPEvent, GameClearedElementsPEvent
-from service.handlers.base_handler_service import ModelHandlerService
+from services.handlers.base_handler_service import ModelHandlerService
 
 
 class GameHandlerService(ModelHandlerService):
@@ -130,3 +131,16 @@ class GameHandlerService(ModelHandlerService):
         return GameClearedElementsPEvent(
             instance=instance
         )
+
+    @classmethod
+    def get_handlers(cls, storage) -> dict:
+        handlers = super().get_handlers(storage)
+        handler = cls(storage)
+
+        handlers.update({
+            GameAddElementPCommand: handler.add_element_p,
+            GameRemoveElementPCommand: handler.remove_element_p,
+            GameMoveElementPCommand: handler.move_element_p,
+            GameClearElementsPCommand: handler.clear_elements_p,
+        })
+        return handlers

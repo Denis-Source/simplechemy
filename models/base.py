@@ -14,7 +14,7 @@ class ModelException(Exception):
         return self.message
 
 
-class InstanceDoesNotExist(Exception):
+class InstanceNotExist(Exception):
     def __init__(self, uuid, model_cls):
         self.model_uuid = uuid
         self.model_cls = model_cls
@@ -30,26 +30,4 @@ class BaseModel(ABC):
     @classmethod
     @abstractmethod
     def from_data(cls, **kwargs) -> BaseModel:
-        raise NotImplementedError
-
-    @classmethod
-    @abstractmethod
-    def list(cls, **kwargs) -> List[BaseModel]:
-        raise NotImplementedError
-
-    @classmethod
-    @abstractmethod
-    def get(cls, **kwargs) -> BaseModel:
-        raise NotImplementedError
-
-    @abstractmethod
-    def delete(self, **kwargs) -> None:
-        raise NotImplementedError
-
-    @abstractmethod
-    def change(self, to_save=True, **kwargs) -> None:
-        raise NotImplementedError
-
-    @abstractmethod
-    def to_dict(self) -> dict:
         raise NotImplementedError

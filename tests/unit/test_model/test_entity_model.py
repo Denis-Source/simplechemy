@@ -1,4 +1,4 @@
-from models.entity import Entity
+from models.nonfungeble.entity import Entity
 from tests.unit.test_model.base_test_model import BaseTestModel
 
 

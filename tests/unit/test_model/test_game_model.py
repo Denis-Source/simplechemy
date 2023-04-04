@@ -1,7 +1,7 @@
 import pytest
 
-from models.game import Game
-from models.user import User
+from models.nonfungeble.game import Game
+from models.nonfungeble.user import User
 from tests.unit.test_model.test_entity_model import TestEntityModel
 
 
@@ -10,20 +10,18 @@ class TestGameModel(TestEntityModel):
 
     @pytest.fixture
     def user_instance(self):
-        return User(storage=self.storage)
+        return User()
 
     @pytest.fixture
     def model_instance(self, user_instance):
         return self.model_cls(
-            creator_user=user_instance,
-            storage=self.storage
+            creator_user=user_instance
         )
 
     @pytest.fixture
     def another_model_instance(self, user_instance):
         return self.model_cls(
-            creator_user=user_instance,
-            storage=self.storage
+            creator_user=user_instance
         )
 
     def test_creator_user(self, model_instance, user_instance):

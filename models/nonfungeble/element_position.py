@@ -1,7 +1,6 @@
-import config
 from models.base import ModelException
-from models.element import Element
-from models.entity import Entity
+from models.fungeble.element import Element
+from models.nonfungeble.entity import Entity
 
 
 class ElementPositionException(ModelException):
@@ -21,9 +20,8 @@ class ElementPosition(Entity):
 
     NAME = "elem_p model"
 
-    def __init__(self, element: Element, x: int, y: int, game=None, to_save=True, storage=config.get_storage(),
-                 **kwargs):
-        super().__init__(to_save=False, **kwargs)
+    def __init__(self, element: Element, x: int, y: int, game=None, **kwargs):
+        super().__init__(**kwargs)
 
         self.element = element
         self.x, self.y = x, y
@@ -32,13 +30,10 @@ class ElementPosition(Entity):
         if game:
             self.game_uuid = game.uuid
 
-        if to_save:
-            self.save()
-
     def __str__(self):
         return f"{self.uuid}-{self.element.name.lower().replace(' ', '_')}"
 
-    def move_to(self, x: int, y: int, user, is_done: bool, to_save=True):
+    def move_to(self, x: int, y: int, user, is_done: bool):
         if not self.BOUNDS[0] <= x < self.BOUNDS[1] or not self.BOUNDS[0] <= y < self.BOUNDS[1]:
             raise ElementPositionOutOfBounds(self)
         self.x, self.y = x, y
@@ -46,9 +41,6 @@ class ElementPosition(Entity):
             self.carried_by = user
         else:
             self.carried_by = None
-
-        if to_save:
-            self.save()
 
     def to_dict(self) -> dict:
         dict_ = super().to_dict()

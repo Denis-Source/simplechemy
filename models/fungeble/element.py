@@ -3,7 +3,7 @@ from __future__ import annotations
 from logging import getLogger
 from typing import List
 
-from models.recipe import Recipe
+from models.fungeble.recipe import Recipe
 
 
 class ElementNotExistException(Exception):

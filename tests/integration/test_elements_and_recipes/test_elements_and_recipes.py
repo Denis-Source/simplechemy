@@ -3,7 +3,7 @@ from random import shuffle
 import pytest
 
 import config
-from models.element import Element, IncompleteElementContent, IncorrectElementRecipe
+from models.fungeble.element import Element, IncompleteElementContent, IncorrectElementRecipe
 
 
 class TestElementsAndRecipes:

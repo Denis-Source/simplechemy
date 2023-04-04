@@ -1,7 +1,7 @@
 import pytest
 
-from models.game import Game
-from models.user import User, UserNotInGameException, UserAlreadyInGameException
+from models.nonfungeble.game import Game
+from models.nonfungeble.user import User, UserNotInGameException, UserAlreadyInGameException
 from tests.unit.test_model.test_entity_model import TestEntityModel
 
 
@@ -13,8 +13,7 @@ class TestUserModel(TestEntityModel):
         similar_password = "8wQy4py4"
 
         instance: User = self.model_cls(
-            plain_password=correct_password,
-            storage=self.storage
+            plain_password=correct_password
         )
 
         assert instance.verify_password(correct_password)
@@ -22,7 +21,7 @@ class TestUserModel(TestEntityModel):
 
     @pytest.fixture
     def game_instance(self, model_instance):
-        return Game(creator_user=model_instance, storage=self.storage)
+        return Game(creator_user=model_instance)
 
     def test_entered_game(self, game_instance: Game, model_instance: User):
         model_instance.enter_game(game_instance)
@@ -46,8 +45,7 @@ class TestUserModel(TestEntityModel):
 
     def test_user_in_game_but_another_provided(self, model_instance: User, game_instance: Game):
         another_game = Game(
-            creator_user=model_instance,
-            storage=self.storage
+            creator_user=model_instance
         )
         model_instance.enter_game(another_game)
 

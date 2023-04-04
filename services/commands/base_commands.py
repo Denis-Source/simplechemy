@@ -1,5 +1,5 @@
-from dataclasses import dataclass
-from typing import Union, Type
+from dataclasses import dataclass, field
+from typing import Union, Type, Optional, Dict
 
 from models.base import BaseModel
 
@@ -12,7 +12,8 @@ class ModelCommand:
 @dataclass
 class ModelCreateCommand(ModelCommand):
     model_cls: Type[BaseModel]
-    fields: dict
+    fields: dict = field(default_factory=dict)
+
 
 @dataclass
 class ModelGetCommand(ModelCommand):

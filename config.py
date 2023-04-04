@@ -2,12 +2,13 @@ import os
 
 from dotenv import load_dotenv
 
+from storage.base import BaseStorage
 from storage.memory import MemoryStorage
 
 load_dotenv()
 
 
-def get_storage():
+def get_storage() -> BaseStorage:
     return MemoryStorage()
 
 

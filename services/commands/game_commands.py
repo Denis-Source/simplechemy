@@ -1,11 +1,11 @@
 from dataclasses import dataclass
 from typing import Union
 
-from models.element import Element
-from models.element_position import ElementPosition
-from models.game import Game
-from models.user import User
-from service.commands.base_commands import ModelCommand
+from models.fungeble.element import Element
+from models.nonfungeble.element_position import ElementPosition
+from models.nonfungeble.game import Game
+from models.nonfungeble.user import User
+from services.commands.base_commands import ModelCommand
 
 
 @dataclass

@@ -21,17 +21,18 @@ class ModelGotEvent(ModelEvent):
 
 @dataclass
 class ModelListedEvent(ModelEvent):
-    instances = List[BaseModel]
+    instances: List[BaseModel]
 
 
 @dataclass
 class ModelChangedEvent(ModelEvent):
     instance: BaseModel
+    fields: dict
 
 
 @dataclass
 class ModelDeletedEvent(ModelEvent):
-    pass
+    instance: BaseModel
 
 
 @dataclass

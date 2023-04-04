@@ -1,8 +1,8 @@
 import pytest
 
-from models.element import Element
-from models.element_position import ElementPosition, ElementPositionOutOfBounds
-from models.user import User
+from models.fungeble.element import Element
+from models.nonfungeble.element_position import ElementPosition, ElementPositionOutOfBounds
+from models.nonfungeble.user import User
 from tests.unit.test_model.test_entity_model import TestEntityModel
 
 
@@ -26,15 +26,14 @@ class TestElementPositionModel(TestEntityModel):
 
     @pytest.fixture
     def user_instance(self):
-        return User(storage=self.storage)
+        return User()
 
     @pytest.fixture
     def model_instance(self, element_instance):
         return self.model_cls(
             element=element_instance,
             x=0,
-            y=0,
-            storage=self.storage
+            y=0
         )
 
     @pytest.fixture
@@ -42,8 +41,7 @@ class TestElementPositionModel(TestEntityModel):
         return self.model_cls(
             element=another_element_instance,
             x=0,
-            y=0,
-            storage=self.storage
+            y=0
         )
 
     def test_move_element(self, model_instance: ElementPosition, user_instance: User):

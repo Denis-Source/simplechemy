@@ -1,7 +1,7 @@
 import pytest
 
-from models.element import Element
-from models.element_position import ElementPosition
+from models.fungeble.element import Element
+from models.nonfungeble.element_position import ElementPosition
 from storage.memory import MemoryStorage
 from tests.integration.test_model_in_storage.test_entity_in_storage import TestEntityInMemoryStorage
 
@@ -15,24 +15,21 @@ class TestElementPositionInMemoryStorage(TestEntityInMemoryStorage):
     @pytest.fixture
     def saved_instance(self):
         instance = self.model_cls(
-            storage=self.storage,
             x=0,
             y=0,
             element=self.element_cls("Air")
         )
-
+        self.storage.put(instance)
         yield instance
-        instance.delete()
+        self.storage.delete(instance)
         self.element_cls.reset_all()
 
     @pytest.fixture
     def not_saved_instance(self):
         instance = self.model_cls(
-            storage=self.storage,
             x=0,
             y=0,
             element=self.element_cls("Air"),
-            to_save=False
         )
 
         yield instance

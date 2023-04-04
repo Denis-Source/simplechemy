@@ -27,3 +27,7 @@ class BaseStorage(ABC):
     @abstractmethod
     def delete(self, instance) -> None:
         raise NotImplementedError
+
+    @abstractmethod
+    def reset(self) -> None:
+        raise NotImplementedError

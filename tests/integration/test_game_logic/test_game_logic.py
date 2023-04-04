@@ -1,21 +1,16 @@
 import pytest
 
 import config
-from models.element import Element, NotUnlockedElementException
-from models.element_position import ElementPosition
-from models.game import Game, ElementPNotInGameException
-from models.user import User
-from storage.memory import MemoryStorage
+from models.fungeble.element import Element, NotUnlockedElementException
+from models.nonfungeble.element_position import ElementPosition
+from models.nonfungeble.game import Game, ElementPNotInGameException
+from models.nonfungeble.user import User
 
 
 class TestGameLogic:
-    storage = MemoryStorage()
-
     @pytest.fixture
     def saved_user(self):
-        instance = User(
-            storage=self.storage,
-        )
+        instance = User()
 
         yield instance
 
@@ -32,8 +27,7 @@ class TestGameLogic:
     @pytest.fixture
     def saved_instance(self, saved_user, element_cls):
         instance = Game(
-            creator_user=saved_user,
-            storage=self.storage
+            creator_user=saved_user
         )
         saved_user.enter_game(instance)
 
@@ -44,8 +38,7 @@ class TestGameLogic:
     @pytest.fixture
     def another_saved_instance(self, saved_user, element_cls, saved_instance):
         instance = Game(
-            creator_user=saved_user,
-            storage=self.storage
+            creator_user=saved_user
         )
         saved_user.leave_game(saved_instance)
         saved_user.enter_game(instance)
@@ -106,8 +99,6 @@ class TestGameLogic:
             is_done=True,
 
         )
-
-        element_p = self.storage.get(ElementPosition, element_p.uuid)
 
         assert element_p
         assert element_p.x == element_p.y == 0.3
