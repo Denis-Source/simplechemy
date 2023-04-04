@@ -2,7 +2,7 @@ import pytest
 
 from models.nonfungeble.game import Game
 from models.nonfungeble.user import User, UserNotInGameException, UserAlreadyInGameException
-from tests.unit.test_model.test_entity_model import TestEntityModel
+from tests.unit.test_models.test_entity_model import TestEntityModel
 
 
 class TestUserModel(TestEntityModel):

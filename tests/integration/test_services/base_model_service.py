@@ -13,19 +13,9 @@ class BaseTestModelServices:
     message_bus = MessageBus(storage=storage)
 
     @pytest.fixture
-    def set_storage(self):
+    def reset_storage(self):
         yield
         self.storage.reset()
-
-    def test_instance_got(self, set_storage):
-        saved_instance = self.model_cls()
-        self.storage.put(saved_instance)
-
-        # TODO move in unittest
-        instance_by_uuid = self.handler_cls(self.storage).get_instance(saved_instance.uuid, self.model_cls)
-        instance_by_self = self.handler_cls(self.storage).get_instance(saved_instance, self.model_cls)
-
-        assert instance_by_self == instance_by_uuid
 
     @pytest.fixture
     def saved_instance(self):
@@ -34,7 +24,7 @@ class BaseTestModelServices:
         yield instance
         self.storage.delete(instance)
 
-    def test_created(self, set_storage):
+    def test_created(self, reset_storage):
         cmd = ModelCreateCommand(
             self.model_cls,
         )
@@ -48,7 +38,7 @@ class BaseTestModelServices:
 
         assert event.instance == saved_instance
 
-    def test_got(self, set_storage, saved_instance):
+    def test_got(self, reset_storage, saved_instance):
         cmd = ModelGetCommand(
             saved_instance.uuid, self.model_cls
         )
@@ -66,7 +56,7 @@ class BaseTestModelServices:
         event = self.message_bus.handle(cmd)
         assert isinstance(event, ModelNotExistEvent)
 
-    def test_listed(self, saved_instance, set_storage):
+    def test_listed(self, saved_instance, reset_storage):
         cmd = ModelListCommand(
             model_cls=self.model_cls
         )

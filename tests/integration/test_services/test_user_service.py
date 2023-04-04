@@ -31,7 +31,7 @@ class TestUserServices(BaseTestModelServices):
         yield instance
         self.storage.delete(instance)
 
-    def test_created(self, set_storage):
+    def test_created(self, reset_storage):
         cmd = ModelCreateCommand(
             model_cls=self.model_cls,
             fields={
@@ -51,7 +51,7 @@ class TestUserServices(BaseTestModelServices):
         assert event.instance.name == cmd.fields.get("name")
         assert event.instance.verify_password(cmd.fields.get("plain_password"))
 
-    def test_enter_game(self, saved_instance, saved_game, set_storage):
+    def test_enter_game(self, saved_instance, saved_game, reset_storage):
         assert saved_instance.game_uuid is None
 
         cmd = UserEnterGameCommand(
@@ -67,7 +67,7 @@ class TestUserServices(BaseTestModelServices):
         assert self.storage.get(User, saved_instance.uuid).game_uuid == saved_game.uuid
         assert self.storage.get(User, saved_instance.uuid) in self.storage.get(Game, saved_game.uuid)
 
-    def test_enter_game_left_not_left_previous(self, saved_game, another_saved_game, saved_instance, set_storage):
+    def test_enter_game_left_not_left_previous(self, saved_game, another_saved_game, saved_instance, reset_storage):
         cmd = UserEnterGameCommand(
             saved_instance,
             saved_game,
@@ -84,7 +84,7 @@ class TestUserServices(BaseTestModelServices):
         event = self.message_bus.handle(cmd)
         assert isinstance(event, UserAlreadyInGameEvent)
 
-    def test_enter_already_enter_game(self, saved_game, saved_instance, set_storage):
+    def test_enter_already_enter_game(self, saved_game, saved_instance, reset_storage):
         cmd = UserEnterGameCommand(
             saved_instance,
             saved_game,
@@ -95,7 +95,7 @@ class TestUserServices(BaseTestModelServices):
         event = self.message_bus.handle(cmd)
         assert isinstance(event, UserAlreadyInGameEvent)
 
-    def test_user_left_game(self, saved_game, saved_instance, set_storage):
+    def test_user_left_game(self, saved_game, saved_instance, reset_storage):
         cmd = UserEnterGameCommand(
             saved_instance,
             saved_game,

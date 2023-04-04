@@ -12,7 +12,7 @@ class TestGameServices(BaseTestModelServices):
     handler_cls = GameHandlerService
 
     @pytest.fixture
-    def saved_user(self, set_storage):
+    def saved_user(self, reset_storage):
         instance = User()
         yield instance
         instance.delete()
@@ -26,11 +26,7 @@ class TestGameServices(BaseTestModelServices):
         yield instance
         self.storage.delete(instance)
 
-    def test_instance_got(self, set_storage):
-        # TODO move in unit tests
-        pass
-
-    def test_created(self, set_storage, saved_user):
+    def test_created(self, reset_storage, saved_user):
         cmd = ModelCreateCommand(
             model_cls=self.model_cls,
             fields={

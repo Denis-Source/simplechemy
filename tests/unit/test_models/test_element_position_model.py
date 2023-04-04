@@ -3,7 +3,7 @@ import pytest
 from models.fungeble.element import Element
 from models.nonfungeble.element_position import ElementPosition, ElementPositionOutOfBounds
 from models.nonfungeble.user import User
-from tests.unit.test_model.test_entity_model import TestEntityModel
+from tests.unit.test_models.test_entity_model import TestEntityModel
 
 
 class TestElementPositionModel(TestEntityModel):

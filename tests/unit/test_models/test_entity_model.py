@@ -1,5 +1,5 @@
 from models.nonfungeble.entity import Entity
-from tests.unit.test_model.base_test_model import BaseTestModel
+from tests.unit.test_models.base_test_model import BaseTestModel
 
 
 class TestEntityModel(BaseTestModel):
