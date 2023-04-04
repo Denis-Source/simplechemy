@@ -58,8 +58,8 @@ class UserHandlerService(ModelHandlerService):
     @classmethod
     def get_handlers(cls, storage) -> dict:
         handlers = super().get_handlers(storage)
-
         handler = cls(storage)
+
         handlers.update({
             UserEnterGameCommand: handler.enter_game,
             UserLeaveGameCommand: handler.leave_game

@@ -1,7 +1,6 @@
 import logging
 from typing import Union
 
-import config
 from models.fungeble.element import Element, NotUnlockedElementException, ElementNotExistException
 from models.nonfungeble.element_position import ElementPosition
 from models.nonfungeble.game import Game, ElementPNotInGameException
@@ -24,22 +23,24 @@ class GameHandlerService(ModelHandlerService):
         elif isinstance(element_or_name, str):
             return Element.get(element_or_name)
 
-    @classmethod
-    def add_element_p(cls, cmd: GameAddElementPCommand) -> \
+    def add_element_p(self, cmd: GameAddElementPCommand) -> \
             Union[
                 GameAddedElementPEvent, GameNotUnlockedElementEvent, GameElementNotExistEvent]:
-        instance: Game = cls.get_instance(
+        instance: Game = self.get_instance(
             instance_or_uuid=cmd.instance,
             model_cls=Game
         )
 
         try:
-            element: Element = cls.get_element(cmd.element)
+            element: Element = self.get_element(cmd.element)
             element_p: ElementPosition = instance.add_element_p(
                 element=element,
                 x=cmd.x,
                 y=cmd.y
             )
+            self.storage.put(element_p)
+            self.storage.put(instance)
+
             return GameAddedElementPEvent(
                 instance=instance,
                 element_p=element_p
@@ -57,15 +58,14 @@ class GameHandlerService(ModelHandlerService):
                 name=cmd.element,
             )
 
-    @classmethod
-    def remove_element_p(cls, cmd: GameRemoveElementPCommand) -> \
+    def remove_element_p(self, cmd: GameRemoveElementPCommand) -> \
             Union[
                 GameRemovedElementPEvent, GameElementPNotInGameEvent]:
-        instance: Game = cls.get_instance(
+        instance: Game = self.get_instance(
             instance_or_uuid=cmd.instance,
             model_cls=Game
         )
-        element_p: ElementPosition = cls.get_instance(
+        element_p: ElementPosition = self.get_instance(
             instance_or_uuid=cmd.element_p,
             model_cls=ElementPosition
         )
@@ -74,6 +74,9 @@ class GameHandlerService(ModelHandlerService):
             instance.remove_element_p(
                 element_p=element_p
             )
+            self.storage.delete(element_p)
+            self.storage.put(instance)
+
             return GameRemovedElementPEvent(
                 instance=instance,
                 element_p=element_p
@@ -88,6 +91,8 @@ class GameHandlerService(ModelHandlerService):
     def move_element_p(cls, cmd: GameMoveElementPCommand) -> \
             Union[
                 GameMovedElementPEvent, GameElementPNotInGameEvent]:
+        # TODO out of bounds event
+
         instance: Game = cls.get_instance(
             instance_or_uuid=cmd.instance,
             model_cls=Game

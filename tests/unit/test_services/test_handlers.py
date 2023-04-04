@@ -1,5 +1,6 @@
 import pytest
 
+from models.fungeble.element import Element
 from models.nonfungeble.game import Game
 from models.nonfungeble.user import User
 from services.handlers.game_handler_service import GameHandlerService
@@ -52,3 +53,20 @@ class TestGameHandler(BaseTestHandler):
         self.storage.put(instance)
         yield instance
         self.storage.delete(instance)
+
+    @pytest.fixture
+    def element_cls(self):
+        element = Element(
+            "Air",
+            starting=True,
+        )
+        yield Element
+        Element.reset_all()
+
+    def test_element_got(self, element_cls):
+        element = Element.list()[0]
+        element_by_name = self.handler_cls(self.storage).get_element(element.name)
+        element_by_self = self.handler_cls(self.storage).get_element(element)
+
+        assert element_by_name == element_by_self
+

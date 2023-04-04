@@ -76,7 +76,7 @@ class Game(Entity):
         if element_p in self.element_positions:
             self.element_positions.remove(element_p)
         else:
-            raise ElementPNotInGameException(element_p)
+            raise ElementPNotInGameException(self, element_p)
 
     def move_element_p(self, element_p, x, y, user, is_done):
         if element_p not in self.element_positions:
