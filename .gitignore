@@ -17,3 +17,6 @@ htmlcov
 
 # pytest config
 pytest.ini
+
+#recipes
+recipes.txt
