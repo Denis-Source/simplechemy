@@ -71,8 +71,8 @@ class User(Entity):
         game.remove_user(self)
         self.game_uuid = None
 
-    def to_dict(self) -> dict:
-        dict_ = super().to_dict()
+    def as_dict(self) -> dict:
+        dict_ = super().as_dict()
         dict_.update({
             "game_uuid": self.game_uuid
         })

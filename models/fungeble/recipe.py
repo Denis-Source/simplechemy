@@ -25,3 +25,9 @@ class Recipe(BaseModel):
 
     def __hash__(self):
         return hash(str(self))
+
+    def as_dict(self) -> dict:
+        return {
+            "result": self.result.as_dict(),
+            "schema": [e.as_dict() for e in self.schema]
+        }

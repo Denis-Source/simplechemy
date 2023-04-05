@@ -3,6 +3,7 @@ from __future__ import annotations
 from logging import getLogger
 from typing import List
 
+from models.base import BaseModel
 from models.fungeble.recipe import Recipe
 
 
@@ -61,7 +62,7 @@ class NotUnlockedElementException(ElementException):
         return f"element ({self.element}) is not unlocked"
 
 
-class Element:
+class Element(BaseModel):
     NAME = "element model"
     logger = getLogger(NAME)
 
@@ -102,6 +103,15 @@ class Element:
 
     def __lt__(self, other):
         return str(self) < str(other)
+
+    def as_dict(self) -> dict:
+        return {
+            "name": self.name
+        }
+
+    @classmethod
+    def from_data(cls, **kwargs) -> BaseModel:
+        pass
 
     @classmethod
     def get_element_count(cls):

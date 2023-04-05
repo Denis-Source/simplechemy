@@ -37,12 +37,12 @@ class Game(Entity):
     def __contains__(self, user):
         return user in self.users
 
-    def to_dict(self) -> dict:
-        dict_ = super().to_dict()
+    def as_dict(self) -> dict:
+        dict_ = super().as_dict()
         dict_.update({
             "creator_uuid": self.creator_uuid,
-            "users": [user.to_dict() for user in self.users],
-            "element_positions": [element_p.to_dict() for element_p in self.element_positions],
+            "users": [user.as_dict() for user in self.users],
+            "element_positions": [element_p.as_dict() for element_p in self.element_positions],
             "unlocked_elements": [element.name for element in self.unlocked_elements]
         })
         return dict_

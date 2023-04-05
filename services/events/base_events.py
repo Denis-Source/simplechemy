@@ -2,10 +2,11 @@ from dataclasses import dataclass
 from typing import List, Type
 
 from models.base import BaseModel
+from services.message import Message
 
 
 @dataclass
-class ModelEvent:
+class ModelEvent(Message):
     pass
 
 

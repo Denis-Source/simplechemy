@@ -3,6 +3,8 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from logging import getLogger
 
+from shared.dictable import Dictable
+
 
 class ModelException(Exception):
     def __init__(self, instance: BaseModel, message: str):
@@ -22,11 +24,15 @@ class InstanceNotExist(Exception):
         return f"{self.model_cls.NAME} with {self.model_uuid} uuid does not exist"
 
 
-class BaseModel(ABC):
+class BaseModel(Dictable, ABC):
     NAME = "base model"
     logger = getLogger(NAME)
 
     @classmethod
     @abstractmethod
     def from_data(cls, **kwargs) -> BaseModel:
+        raise NotImplementedError
+
+    @abstractmethod
+    def as_dict(self) -> dict:
         raise NotImplementedError

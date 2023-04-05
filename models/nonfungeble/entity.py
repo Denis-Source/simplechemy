@@ -64,7 +64,7 @@ class Entity(BaseModel):
         self.logger.debug(f"deleting instance ({self})")
         storage.delete(self)
 
-    def to_dict(self) -> dict:
+    def as_dict(self) -> dict:
         return {
             "type": self.NAME,
             "uuid": self.uuid,

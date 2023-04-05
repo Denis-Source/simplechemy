@@ -2,10 +2,11 @@ from dataclasses import dataclass, field
 from typing import Union, Type
 
 from models.base import BaseModel
+from services.message import Message
 
 
 @dataclass
-class ModelCommand:
+class ModelCommand(Message):
     pass
 
 
