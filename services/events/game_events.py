@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from typing import Tuple, List
 
 from models.fungeble.element import Element
 from models.nonfungeble.element_position import ElementPosition
@@ -34,6 +35,7 @@ class GameRemovedElementPEvent(GameEvent):
     instance: Game
     element_p: ElementPosition
 
+
 @dataclass
 class GameMovedElementPEvent(GameEvent):
     instance: Game
@@ -44,6 +46,22 @@ class GameMovedElementPEvent(GameEvent):
 class GameElementPNotInGameEvent(GameEvent):
     instance: Game
     element_p: ElementPosition
+
+
+@dataclass
+class GameElementPOutOfBoundsEvent(GameEvent):
+    instance: Game
+    element_p: ElementPosition
+    x: int
+    y: int
+    bounds: Tuple[int, int]
+
+
+@dataclass
+class GameNewElementCraftedEvent(GameEvent):
+    instance: Game
+    element_p: ElementPosition
+    used_elements_p: List[ElementPosition]
 
 
 @dataclass

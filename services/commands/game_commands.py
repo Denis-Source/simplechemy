@@ -16,7 +16,7 @@ class GameCommand(ModelCommand):
 @dataclass
 class GameAddElementPCommand(GameCommand):
     instance: Union[Game, str]
-    element: Element
+    element: Union[Element, str]
     x: int = 0
     y: int = 0
 

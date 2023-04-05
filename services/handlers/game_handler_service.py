@@ -2,13 +2,14 @@ import logging
 from typing import Union
 
 from models.fungeble.element import Element, NotUnlockedElementException, ElementNotExistException
-from models.nonfungeble.element_position import ElementPosition
+from models.nonfungeble.element_position import ElementPosition, ElementPositionOutOfBounds
 from models.nonfungeble.game import Game, ElementPNotInGameException
 from models.nonfungeble.user import User
 from services.commands.game_commands import GameAddElementPCommand, GameRemoveElementPCommand, GameMoveElementPCommand, \
     GameClearElementsPCommand
 from services.events.game_events import GameAddedElementPEvent, GameNotUnlockedElementEvent, GameElementNotExistEvent, \
-    GameRemovedElementPEvent, GameElementPNotInGameEvent, GameMovedElementPEvent, GameClearedElementsPEvent
+    GameRemovedElementPEvent, GameElementPNotInGameEvent, GameMovedElementPEvent, GameClearedElementsPEvent, \
+    GameElementPOutOfBoundsEvent, GameNewElementCraftedEvent
 from services.handlers.base_handler_service import ModelHandlerService
 
 
@@ -87,41 +88,63 @@ class GameHandlerService(ModelHandlerService):
                 element_p=element_p
             )
 
-    @classmethod
-    def move_element_p(cls, cmd: GameMoveElementPCommand) -> \
+    def move_element_p(self, cmd: GameMoveElementPCommand) -> \
             Union[
-                GameMovedElementPEvent, GameElementPNotInGameEvent]:
-        # TODO out of bounds event
-
-        instance: Game = cls.get_instance(
+                GameMovedElementPEvent, GameNewElementCraftedEvent,
+                GameElementPNotInGameEvent, GameElementPOutOfBoundsEvent]:
+        instance: Game = self.get_instance(
             instance_or_uuid=cmd.instance,
             model_cls=Game
         )
-        user: User = cls.get_instance(
-            instance_or_uuid=cmd.instance,
+        user: User = self.get_instance(
+            instance_or_uuid=cmd.user,
             model_cls=User
         )
-        element_p: ElementPosition = cls.get_instance(
+        element_p: ElementPosition = self.get_instance(
             instance_or_uuid=cmd.element_p,
             model_cls=ElementPosition
         )
 
         try:
-            instance.move_element_p(
+            result, used_elements_p = instance.move_element_p(
                 element_p=element_p,
                 x=cmd.x,
                 y=cmd.y,
                 user=user,
                 is_done=cmd.is_done
             )
-            return GameMovedElementPEvent(
-                instance=instance,
-                element_p=element_p
-            )
+
+            if not result:
+                self.storage.put(element_p)
+                self.storage.put(instance)
+
+                return GameMovedElementPEvent(
+                    instance=instance,
+                    element_p=element_p
+                )
+            else:
+                self.storage.put(result)
+                for u_ps in used_elements_p:
+                    self.storage.delete(u_ps)
+                self.storage.put(instance)
+                return GameNewElementCraftedEvent(
+                    instance=instance,
+                    element_p=result,
+                    used_elements_p=used_elements_p
+                )
+
         except ElementPNotInGameException:
             return GameElementPNotInGameEvent(
                 instance=instance,
                 element_p=element_p
+            )
+        except ElementPositionOutOfBounds:
+            return GameElementPOutOfBoundsEvent(
+                instance=instance,
+                element_p=element_p,
+                x=cmd.x,
+                y=cmd.y,
+                bounds=ElementPosition.BOUNDS
             )
 
     @classmethod

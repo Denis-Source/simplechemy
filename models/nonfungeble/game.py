@@ -96,7 +96,7 @@ class Game(Entity):
                 return self._craft_new_element(element_p, x, y)
             except IncorrectElementRecipe:
                 self.logger.debug(f"not a valid recipe")
-                return None, []
+        return None, []
 
     def _craft_new_element(self, element_p, x, y):
         result_element, used_elements_p = self._search_within_range(element_p)
