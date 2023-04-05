@@ -1,11 +1,7 @@
-import asyncio
 import logging
-from threading import Thread
-from time import sleep
 
 import config
 from app.app import App
-
 
 if __name__ == '__main__':
     logging.basicConfig(

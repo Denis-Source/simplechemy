@@ -3,7 +3,6 @@ import os
 import signal
 import time
 from multiprocessing import Process
-from subprocess import Popen
 
 import pytest
 

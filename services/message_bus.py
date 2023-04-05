@@ -1,6 +1,5 @@
 import config
 from services.events.base_events import BaseEvent
-from services.handlers.model_handler_service import ModelHandlerService
 from services.handlers.game_handler_service import GameHandlerService
 from services.handlers.user_handler_service import UserHandlerService
 

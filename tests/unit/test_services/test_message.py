@@ -55,8 +55,6 @@ class TestMessage:
         return instance
 
     def test_as_dict_conversion(self, complex_instance):
-        a = complex_instance.as_dict()
-
         assert complex_instance.as_dict() == {
             "field1": 0,
             "field2": "0",

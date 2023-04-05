@@ -1,5 +1,3 @@
-from dataclasses import asdict
-
 import pytest
 
 from models.nonfungeble.game import Game
@@ -110,8 +108,6 @@ class TestUserServices(BaseTestModelServices):
             saved_instance,
             saved_game
         )
-
-        a = event.as_dict()
 
         event = self.message_bus.handle(cmd)
         assert isinstance(event, UserLeftGameEvent)

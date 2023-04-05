@@ -10,7 +10,7 @@ class RegisterHandler(BaseHandler):
     logger = getLogger(NAME)
 
     def post(self) -> None:
-        self.logger.debug(f"registering new user")
+        self.logger.debug("registering new user")
         password = self.get_argument("password")
 
         cmd = ModelCreateCommand(
