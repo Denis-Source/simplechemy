@@ -6,7 +6,7 @@ from models.base import BaseModel
 
 
 class Recipe(BaseModel):
-    NAME = "recipe model"
+    NAME = "recipe"
     logger = getLogger(NAME)
 
     @classmethod

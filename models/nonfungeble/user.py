@@ -22,7 +22,7 @@ class UserNotInGameException(UserException):
 
 
 class User(Entity):
-    NAME = "user model"
+    NAME = "user"
     logger = getLogger(NAME)
 
     def __init__(self, name: str = None, plain_password: str = None, to_save=True, storage=config.get_storage(),

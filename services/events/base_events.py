@@ -6,37 +6,37 @@ from services.message import Message
 
 
 @dataclass
-class ModelEvent(Message):
+class BaseEvent(Message):
     pass
 
 
 @dataclass
-class ModelCreatedEvent(ModelEvent):
+class ModelCreatedEvent(BaseEvent):
     instance: BaseModel
 
 
 @dataclass
-class ModelGotEvent(ModelEvent):
+class ModelGotEvent(BaseEvent):
     instance: BaseModel
 
 
 @dataclass
-class ModelListedEvent(ModelEvent):
+class ModelListedEvent(BaseEvent):
     instances: List[BaseModel]
 
 
 @dataclass
-class ModelChangedEvent(ModelEvent):
+class ModelChangedEvent(BaseEvent):
     instance: BaseModel
     fields: dict
 
 
 @dataclass
-class ModelDeletedEvent(ModelEvent):
+class ModelDeletedEvent(BaseEvent):
     instance: BaseModel
 
 
 @dataclass
-class ModelNotExistEvent(ModelEvent):
+class ModelNotExistEvent(BaseEvent):
     uuid: str
     model_cls: Type[BaseModel]

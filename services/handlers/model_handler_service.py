@@ -34,7 +34,7 @@ class ModelHandlerService:
             raise WrongModelClassCommandException(instance_or_uuid)
 
     def create(self, cmd: ModelCreateCommand) -> ModelCreatedEvent:
-        self.logger.debug(f"creating {cmd.model_cls} with fields: {str(cmd.fields)}")
+        self.logger.debug(f"creating {cmd.model_cls.NAME} with fields: {', '.join(cmd.fields.keys())}")
         instance = cmd.model_cls(
             **cmd.fields
         )

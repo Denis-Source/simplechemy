@@ -6,7 +6,7 @@ from models.nonfungeble.user import UserAlreadyInGameException, UserNotInGameExc
 from services.commands.user_commands import UserEnterGameCommand, UserLeaveGameCommand
 from services.events.user_events import UserEnteredGameEvent, UserAlreadyInGameEvent, UserLeftGameEvent, \
     UserNotInGameEvent
-from services.handlers.base_handler_service import ModelHandlerService
+from services.handlers.model_handler_service import ModelHandlerService
 
 
 class UserHandlerService(ModelHandlerService):

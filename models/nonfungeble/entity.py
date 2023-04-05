@@ -9,7 +9,7 @@ from models.base import BaseModel, InstanceNotExist
 
 
 class Entity(BaseModel):
-    NAME = "entity model"
+    NAME = "entity"
     logger = getLogger(NAME)
 
     def __init__(self, name=None, generate_uuid=True):

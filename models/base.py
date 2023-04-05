@@ -25,7 +25,7 @@ class InstanceNotExist(Exception):
 
 
 class BaseModel(Dictable, ABC):
-    NAME = "base model"
+    NAME = "base"
     logger = getLogger(NAME)
 
     @classmethod

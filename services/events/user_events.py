@@ -2,11 +2,11 @@ from dataclasses import dataclass
 
 from models.nonfungeble.game import Game
 from models.nonfungeble.user import User
-from services.events.base_events import ModelEvent
+from services.events.base_events import BaseEvent
 
 
 @dataclass
-class UserEvent(ModelEvent):
+class UserEvent(BaseEvent):
     pass
 
 

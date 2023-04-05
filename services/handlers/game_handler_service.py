@@ -10,7 +10,7 @@ from services.commands.game_commands import GameAddElementPCommand, GameRemoveEl
 from services.events.game_events import GameAddedElementPEvent, GameNotUnlockedElementEvent, GameElementNotExistEvent, \
     GameRemovedElementPEvent, GameElementPNotInGameEvent, GameMovedElementPEvent, GameClearedElementsPEvent, \
     GameElementPOutOfBoundsEvent, GameNewElementCraftedEvent
-from services.handlers.base_handler_service import ModelHandlerService
+from services.handlers.model_handler_service import ModelHandlerService
 
 
 class GameHandlerService(ModelHandlerService):

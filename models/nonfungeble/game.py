@@ -20,7 +20,7 @@ class ElementPNotInGameException(GameException):
 
 
 class Game(Entity):
-    NAME = "game model"
+    NAME = "game"
     logger = getLogger(NAME)
 
     CRAFTING_RANGE = 0.05

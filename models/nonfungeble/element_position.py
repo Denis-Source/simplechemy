@@ -18,7 +18,7 @@ class ElementPositionOutOfBounds(ElementPositionException):
 class ElementPosition(Entity):
     BOUNDS = 0, 1
 
-    NAME = "elem_p model"
+    NAME = "elem_p"
 
     def __init__(self, element: Element, x: int, y: int, game=None, **kwargs):
         super().__init__(**kwargs)

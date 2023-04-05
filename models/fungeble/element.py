@@ -63,7 +63,7 @@ class NotUnlockedElementException(ElementException):
 
 
 class Element(BaseModel):
-    NAME = "element model"
+    NAME = "element"
     logger = getLogger(NAME)
 
     _instances = {}
