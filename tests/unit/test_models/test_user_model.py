@@ -53,7 +53,8 @@ class TestUserModel(TestEntityModel):
         with pytest.raises(UserNotInGameException):
             model_instance.leave_game(game_instance)
 
-    def test_user_already_in_game(self, model_instance: User, game_instance: Game):
+    def test_user_already_in_game(
+            self, model_instance: User, game_instance: Game):
         assert model_instance not in game_instance
         model_instance.enter_game(game_instance)
         with pytest.raises(UserAlreadyInGameException):

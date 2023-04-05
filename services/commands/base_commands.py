@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-from typing import Union, Type, Optional, Dict
+from typing import Union, Type
 
 from models.base import BaseModel
 

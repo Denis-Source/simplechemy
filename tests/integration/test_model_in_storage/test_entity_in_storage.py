@@ -1,5 +1,3 @@
-import pytest
-
 from models.nonfungeble.entity import Entity
 from storage.memory import MemoryStorage
 from tests.integration.test_model_in_storage.base_test_model_in_storage import BaseTestModelInStorage

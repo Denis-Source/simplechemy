@@ -3,8 +3,6 @@ from abc import ABC, abstractmethod
 
 import pytest
 
-from storage.memory import MemoryStorage
-
 
 class BaseTestModel(ABC):
     model_cls = None

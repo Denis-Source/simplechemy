@@ -1,6 +1,3 @@
-import pytest
-
-from models.nonfungeble.game import Game
 from models.nonfungeble.user import User
 from storage.memory import MemoryStorage
 from tests.integration.test_model_in_storage.test_entity_in_storage import TestEntityInMemoryStorage

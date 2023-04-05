@@ -18,10 +18,6 @@ class UserHandlerService(ModelHandlerService):
             instance: User = self.get_instance(cmd.instance, User)
             game: Game = self.get_instance(cmd.game, Game)
 
-            previous_game = None
-            if instance.game_uuid:
-                previous_game = self.storage.get(Game, instance.game_uuid)
-
             instance.enter_game(game)
             self.storage.put(instance)
             self.storage.put(game)

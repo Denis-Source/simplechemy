@@ -2,7 +2,6 @@ import pytest
 
 import config
 from models.fungeble.element import Element, NotUnlockedElementException
-from models.nonfungeble.element_position import ElementPosition
 from models.nonfungeble.game import Game, ElementPNotInGameException
 from models.nonfungeble.user import User
 

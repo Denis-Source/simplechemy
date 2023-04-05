@@ -63,8 +63,6 @@ class TestGameServices(BaseTestModelServices):
 
     def test_add_element_p_success(self, element_cls, saved_instance, reset_storage):
         for element in element_cls.list(starting=True):
-            x = y = 0
-
             cmd = GameAddElementPCommand(
                 instance=saved_instance,
                 element=element,
@@ -75,7 +73,7 @@ class TestGameServices(BaseTestModelServices):
             event = self.message_bus.handle(cmd)
             assert isinstance(event, GameAddedElementPEvent)
             assert event.element_p.element == element
-            assert event.element_p.x == event.element_p.y == x
+            assert event.element_p.x == event.element_p.y == 0
 
             assert event.element_p == self.storage.get(ElementPosition, event.element_p.uuid)
             assert event.element_p in self.storage.get(Game, saved_instance.uuid).element_positions
@@ -120,7 +118,7 @@ class TestGameServices(BaseTestModelServices):
         another_element = None
         for u_e in saved_instance.unlocked_elements:
             try:
-                result = element_cls.get_result([element, u_e])
+                element_cls.get_result([element, u_e])
                 another_element = u_e
             except IncorrectElementRecipe:
                 pass

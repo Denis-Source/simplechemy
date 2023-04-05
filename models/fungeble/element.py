@@ -92,7 +92,6 @@ class Element:
         self._instances[self.name] = self
 
     def __str__(self):
-        involved_recipes = "\n".join([f"{str(recipe)}" for recipe in self.involved_recipes])
         return f"{self.name}"
 
     def __eq__(self, other):
@@ -163,7 +162,7 @@ class Element:
         total_elements = len(set([line.split("=")[0].strip() for line in lines]))
 
         # starting elements
-        cls.logger.debug(f"loading starting elements")
+        cls.logger.debug("loading starting elements")
         for line in lines:
             if line.count("=") == 0:
                 element = Element(
@@ -175,7 +174,7 @@ class Element:
                 cls._starting.append(element)
 
         cls.logger.debug(f"loaded ({Element.get_element_count()}) starting elements")
-        cls.logger.debug(f"loading secondary elements")
+        cls.logger.debug("loading secondary elements")
 
         # secondary elements
         while Element.get_element_count() != total_elements:

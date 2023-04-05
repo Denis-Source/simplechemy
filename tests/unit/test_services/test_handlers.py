@@ -25,8 +25,10 @@ class BaseTestHandler:
     def test_instance_got(self, saved_instance):
         self.storage.put(saved_instance)
 
-        instance_by_uuid = self.handler_cls(self.storage).get_instance(saved_instance.uuid, self.model_cls)
-        instance_by_self = self.handler_cls(self.storage).get_instance(saved_instance, self.model_cls)
+        instance_by_uuid = self.handler_cls(self.storage).\
+            get_instance(saved_instance.uuid, self.model_cls)
+        instance_by_self = self.handler_cls(self.storage).\
+            get_instance(saved_instance, self.model_cls)
 
         assert instance_by_self == instance_by_uuid
 
@@ -56,7 +58,7 @@ class TestGameHandler(BaseTestHandler):
 
     @pytest.fixture
     def element_cls(self):
-        element = Element(
+        Element(
             "Air",
             starting=True,
         )
@@ -65,8 +67,9 @@ class TestGameHandler(BaseTestHandler):
 
     def test_element_got(self, element_cls):
         element = Element.list()[0]
-        element_by_name = self.handler_cls(self.storage).get_element(element.name)
-        element_by_self = self.handler_cls(self.storage).get_element(element)
+        element_by_name = self.handler_cls(self.storage).\
+            get_element(element.name)
+        element_by_self = self.handler_cls(self.storage).\
+            get_element(element)
 
         assert element_by_name == element_by_self
-

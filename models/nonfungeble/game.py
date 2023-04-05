@@ -1,6 +1,5 @@
 from logging import getLogger
 
-import config
 from models.base import ModelException
 from models.fungeble.element import Element, IncorrectElementRecipe, NotUnlockedElementException
 from models.nonfungeble.element_position import ElementPosition
@@ -92,10 +91,10 @@ class Game(Entity):
 
         if is_done:
             try:
-                self.logger.debug(f"attempting to craft a new element")
+                self.logger.debug("attempting to craft a new element")
                 return self._craft_new_element(element_p, x, y)
             except IncorrectElementRecipe:
-                self.logger.debug(f"not a valid recipe")
+                self.logger.debug("not a valid recipe")
         return None, []
 
     def _craft_new_element(self, element_p, x, y):
@@ -120,7 +119,7 @@ class Game(Entity):
         return new_element_p, used_elements_p
 
     def _search_within_range(self, element_p):
-        self.logger.debug(f"searching near elements")
+        self.logger.debug("searching near elements")
         close_elements_p = []
         for other_element_p in self.element_positions:
             if abs(element_p.x) - abs(other_element_p.x) <= self.CRAFTING_RANGE and abs(element_p.y) - abs(
@@ -130,7 +129,7 @@ class Game(Entity):
         return Element.get_result([element_p.element for element_p in close_elements_p]), close_elements_p
 
     def clear_elements_p(self):
-        self.logger.info(f"cleared all elements")
+        self.logger.info("cleared all elements")
         for ep in self.element_positions:
             ep.delete()
 

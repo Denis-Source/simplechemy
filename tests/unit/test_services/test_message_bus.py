@@ -23,4 +23,3 @@ class TestMessageBus:
 
         with pytest.raises(NoHandlerAvailableException):
             message_bus.handle(cmd)
-

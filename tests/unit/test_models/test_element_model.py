@@ -22,6 +22,6 @@ class TestElementModel:
     def test_correct_amount_of_elements_created(self, element_names, element_cls):
         for element_name in element_names:
             for _ in range(10):
-                e = element_cls(element_name)
+                element_cls(element_name)
 
         assert element_cls.get_element_count() == len(element_name)

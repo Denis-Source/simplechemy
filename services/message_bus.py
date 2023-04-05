@@ -14,8 +14,9 @@ class NoHandlerAvailableException(Exception):
 class MessageBus:
     def __init__(self, storage=config.get_storage()):
         self.storage = storage
-        self._handlers = UserHandlerService.get_handlers(self.storage) | \
-                         GameHandlerService.get_handlers(self.storage)
+        self._handlers = \
+            UserHandlerService.get_handlers(self.storage) | \
+            GameHandlerService.get_handlers(self.storage)
 
     def handle(self, cmd):
         handler = self._handlers.get(cmd.__class__)
