@@ -8,4 +8,3 @@ class Responses(dict, Enum):
     NOT_FOUND = {"message": "resource not found"}
 
     WS_OPENED = {"ws_connection": "opened"}
-
