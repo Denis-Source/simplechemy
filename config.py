@@ -1,4 +1,5 @@
 import os
+from datetime import timedelta
 from logging import DEBUG
 
 from dotenv import load_dotenv
@@ -8,6 +9,7 @@ from storage.memory import MemoryStorage
 
 LOGGING_FORMAT = "%(asctime)s\t%(levelname)-7s\t%(name)-20s\t%(message)s"
 JWT_ALGORITHM = "HS256"
+TOKEN_LIFETIME = timedelta(days=60)
 
 
 def get_logging_file():

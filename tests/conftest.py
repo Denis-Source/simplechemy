@@ -1,8 +1,4 @@
 import logging
-import os
-import signal
-import time
-from multiprocessing import Process
 
 import pytest
 
@@ -32,9 +28,10 @@ def run_app():
 
 @pytest.fixture(scope="session")
 def app():
-    process = Process(target=run_app)
-    process.start()
-    time.sleep(1)
-    yield process
-
-    os.kill(process.pid, signal.SIGINT)
+    pass
+    # process = Process(target=run_app)
+    # process.start()
+    # time.sleep(1)
+    # yield process
+    #
+    # os.kill(process.pid, signal.SIGINT)

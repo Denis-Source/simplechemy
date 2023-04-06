@@ -38,4 +38,4 @@ class LoginHandler(BaseHandler):
             )
         else:
             self.logger.debug(f"{event.instance} is not verified")
-            raise HTTPError(401, responses[404])
+            raise HTTPError(401, responses[401])
