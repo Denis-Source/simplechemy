@@ -144,6 +144,15 @@ class TestGameLogic:
     def test_if_unlocked_elements_correct(self, element_cls, saved_instance):
         assert set(saved_instance.unlocked_elements) == set(element_cls.list(starting=True))
 
+    def test_if_all_elements_craftable(self, element_cls):
+        filepath = config.get_element_content_path()
+        element_cls.load_from_txt(filepath)
+
+        for element in element_cls.list():
+            for recipe in element.recipes:
+                result = element_cls.get_result(recipe.schema)
+                assert result == element
+
     def test_if_game_can_be_completed(self, element_cls, saved_instance, saved_user):
         for element in saved_instance.unlocked_elements:
             for recipy in element.involved_recipes:

@@ -132,25 +132,3 @@ class TestElementsAndRecipes:
         correct_element = element_cls.get("Bird")
 
         assert element_cls.get_result(recipe_elements) != correct_element
-
-    def check_obtainability(self, element: Element, obtainability_dict: dict = None):
-        if element.starting:
-            status = True
-            obtainability_dict[element] = status
-            return status
-        else:
-            status = all(
-                all(self.check_obtainability(recipe_element, obtainability_dict)
-                    for recipe_element in recipe.schema)
-                for recipe in element.recipes)
-            obtainability_dict[element] = status
-            return status
-
-    def test_if_all_elements_craftable(self, element_cls):
-        filepath = config.get_element_content_path()
-        element_cls.load_from_txt(filepath)
-
-        for element in element_cls.list():
-            for recipe in element.recipes:
-                result = element_cls.get_result(recipe.schema)
-                assert result == element
