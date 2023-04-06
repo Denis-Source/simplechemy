@@ -1,7 +1,7 @@
 import logging
 import os
 import signal
-from datetime import time
+import time
 from multiprocessing import Process
 
 import pytest
