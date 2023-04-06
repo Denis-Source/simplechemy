@@ -2,22 +2,29 @@ import logging
 from typing import Union, Type
 
 from models.base import BaseModel, InstanceNotExist
+from models.nonfungeble.game import Game
+from models.nonfungeble.user import User
 from services.commands.base_commands import ModelCreateCommand, ModelGetCommand, ModelListCommand, ModelDeleteCommand
 from services.events.base_events import ModelCreatedEvent, ModelGotEvent, ModelListedEvent, ModelDeletedEvent, \
     InstanceNotExistEvent
 
 
 class WrongModelClassCommandException(Exception):
-    def __init__(self, model_cls: Type[BaseModel]):
-        self.model_cls = model_cls
+    def __init__(self, model_cls_model: Type[BaseModel]):
+        self.model_cls_model = model_cls_model
 
     def __str__(self):
-        return f"Command can not have {self.model_cls} class"
+        return f"Command can not have {self.model_cls_model} class"
 
 
 class ModelHandlerService:
     NAME = "model handler"
     logger = logging.getLogger()
+
+    MODEL_CLS = {
+        Game.NAME: Game,
+        User.NAME: User
+    }
 
     def __init__(self, storage):
         self.storage = storage
@@ -36,38 +43,45 @@ class ModelHandlerService:
         else:
             raise WrongModelClassCommandException(instance_or_uuid)
 
+    def get_model_cls(self, model_name):
+        model_cls = self.MODEL_CLS.get(model_name)
+        if not model_cls:
+            raise NotImplementedError
+        return model_cls
+
     def create(self, cmd: ModelCreateCommand) -> ModelCreatedEvent:
-        self.logger.debug(f"creating {cmd.model_cls.NAME} with fields: {', '.join(cmd.fields.keys())}")
-        instance = cmd.model_cls(
+        self.logger.debug(f"creating {cmd.model_cls_name} with fields: {', '.join(cmd.fields.keys())}")
+        model_cls = self.get_model_cls(cmd.model_cls_name)
+        instance = model_cls(
             **cmd.fields
         )
         self.storage.put(instance)
         return ModelCreatedEvent(instance)
 
     def get(self, cmd: ModelGetCommand) -> Union[ModelGotEvent, InstanceNotExistEvent]:
-        self.logger.debug(f"getting {cmd.model_cls} with {cmd.uuid}")
+        self.logger.debug(f"getting {cmd.model_cls_name} with {cmd.uuid}")
         try:
             instance = self.get_instance(
                 instance_or_uuid=cmd.uuid,
-                model_cls=cmd.model_cls
+                model_cls=self.get_model_cls(cmd.model_cls_name)
             )
             self.logger.debug(f"got {instance}")
             return ModelGotEvent(
                 instance=instance
             )
         except InstanceNotExist:
-            self.logger.debug(f"no {cmd.model_cls} found")
+            self.logger.debug(f"no {cmd.model_cls_name} found")
             return InstanceNotExistEvent(
                 uuid=cmd.uuid,
-                model_cls=cmd.model_cls
+                model_cls_name=cmd.model_cls_name
             )
 
     def list(self, cmd: ModelListCommand) -> ModelListedEvent:
-        self.logger.debug(f"listing {cmd.model_cls}")
+        self.logger.debug(f"listing {cmd.model_cls_name}")
 
-        instances = self.storage.list(cmd.model_cls)
+        instances = self.storage.list(self.get_model_cls(cmd.model_cls_name))
 
-        self.logger.debug(f"listed {cmd.model_cls} ({len(instances)})")
+        self.logger.debug(f"listed {cmd.model_cls_name} ({len(instances)})")
         return ModelListedEvent(
             instances=instances
         )

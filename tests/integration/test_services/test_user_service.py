@@ -45,7 +45,7 @@ class TestUserServices(BaseTestModelServices):
 
     def test_created(self, reset_storage):
         cmd = ModelCreateCommand(
-            model_cls=self.model_cls,
+            model_cls_name=self.model_cls.NAME,
             fields={
                 "name": "test name",
                 "plain_password": "plain_password"

@@ -28,7 +28,7 @@ class UserHandlerService(ModelHandlerService):
         except InstanceNotExist:
             return InstanceNotExistEvent(
                 uuid=cmd.instance,
-                model_cls=User
+                model_cls_name=User.NAME
             )
 
     def enter_game(self, cmd: UserEnterGameCommand) -> Union[UserEnteredGameEvent, UserAlreadyInGameEvent]:

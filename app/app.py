@@ -8,6 +8,7 @@ import config
 from app.handlers.auth.login_handler import LoginHandler
 from app.handlers.auth.refresh_handler import RefreshHandler
 from app.handlers.auth.register_handler import RegisterHandler
+from app.handlers.not_found_handler import NotFoundHandler
 from app.handlers.ping_handler import PingHandler
 from services.message_bus import MessageBus
 
@@ -41,7 +42,13 @@ class App(Application):
             (Routes.refresh, RefreshHandler)
         ]
 
-        super().__init__(self._handlers, None, None, **settings)
+        super().__init__(
+            self._handlers,
+            None,
+            None,
+            default_handler_class=NotFoundHandler,
+            **settings
+        )
         self.storage = config.get_storage()
         self.message_bus = MessageBus(self.storage)
 

@@ -10,30 +10,31 @@ class TestElementPositionInMemoryStorage(TestEntityInMemoryStorage):
     storage = MemoryStorage()
     model_cls = ElementPosition
 
-    element_cls = Element
+    @pytest.fixture(scope="module")
+    def element_cls(self):
+        yield Element
+        Element.reset_all()
 
     @pytest.fixture
-    def saved_instance(self):
+    def saved_instance(self, element_cls):
         instance = self.model_cls(
             x=0,
             y=0,
-            element=self.element_cls("Air")
+            element=element_cls("Air")
         )
         self.storage.put(instance)
         yield instance
         self.storage.delete(instance)
-        self.element_cls.reset_all()
 
     @pytest.fixture
-    def not_saved_instance(self):
+    def not_saved_instance(self, element_cls):
         instance = self.model_cls(
             x=0,
             y=0,
-            element=self.element_cls("Air"),
+            element=element_cls("Air"),
         )
 
         yield instance
-        self.element_cls.reset_all()
 
     def test_model_change(self, saved_instance):
         new_cords = 0.3, 0.4

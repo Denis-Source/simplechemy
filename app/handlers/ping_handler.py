@@ -1,6 +1,7 @@
 from logging import getLogger
 
 from app.handlers.base_handler import BaseHandler
+from app.handlers.responses import Responses
 
 
 class PingHandler(BaseHandler):
@@ -8,4 +9,4 @@ class PingHandler(BaseHandler):
     logger = getLogger(NAME)
 
     def get(self):
-        self.write("pong")
+        self.write(Responses.PONG)

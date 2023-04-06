@@ -1,4 +1,3 @@
-from http.client import responses
 from logging import getLogger
 
 from tornado.web import HTTPError
@@ -27,7 +26,7 @@ class LoginHandler(BaseHandler):
         event = self.application.message_bus.handle(cmd)
         if isinstance(event, InstanceNotExistEvent):
             self.logger.debug("user not found")
-            raise HTTPError(404, responses[404])
+            raise HTTPError(404)
 
         if event.is_correct:
             self.logger.debug(f"{event.instance} is verified")
@@ -38,4 +37,4 @@ class LoginHandler(BaseHandler):
             )
         else:
             self.logger.debug(f"{event.instance} is not verified")
-            raise HTTPError(401, responses[401])
+            raise HTTPError(401)

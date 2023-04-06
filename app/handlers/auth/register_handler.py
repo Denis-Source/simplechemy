@@ -15,7 +15,7 @@ class RegisterHandler(BaseHandler):
         name = self.get_argument("name", None)
 
         cmd = ModelCreateCommand(
-            User,
+            User.NAME,
             fields={
                 "plain_password": password,
                 "name": name}

@@ -146,13 +146,11 @@ class TestElementsAndRecipes:
             obtainability_dict[element] = status
             return status
 
-    def test_if_all_elements_in_content_path_obtainable(self, element_cls):
+    def test_if_all_elements_craftable(self, element_cls):
         filepath = config.get_element_content_path()
         element_cls.load_from_txt(filepath)
 
-        obtain_dict = {}
-
         for element in element_cls.list():
-            self.check_obtainability(element, obtain_dict)
-
-        assert all([obtain_dict.values()])
+            for recipe in element.recipes:
+                result = element_cls.get_result(recipe.schema)
+                assert result == element

@@ -40,7 +40,8 @@ class BaseTestModelServices:
 
     def test_got(self, reset_storage, saved_instance):
         cmd = ModelGetCommand(
-            saved_instance.uuid, self.model_cls
+            saved_instance.uuid,
+            self.model_cls.NAME
         )
         event = self.message_bus.handle(cmd)
         assert isinstance(event, ModelGotEvent)
@@ -51,14 +52,14 @@ class BaseTestModelServices:
 
         cmd = ModelGetCommand(
             saved_instance.uuid,
-            self.model_cls
+            self.model_cls.NAME
         )
         event = self.message_bus.handle(cmd)
         assert isinstance(event, InstanceNotExistEvent)
 
     def test_listed(self, saved_instance, reset_storage):
         cmd = ModelListCommand(
-            model_cls=self.model_cls
+            model_cls_name=self.model_cls.NAME
         )
         event = self.message_bus.handle(cmd)
 

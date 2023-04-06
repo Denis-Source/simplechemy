@@ -1,6 +1,5 @@
 import functools
 from datetime import datetime, timedelta
-from http.client import responses
 from logging import getLogger
 from typing import Union
 
@@ -30,36 +29,62 @@ def jwt_authenticated(method):
     def wrapper(self: RequestHandler, *args, **kwargs):
         try:
             logger.debug(f"authorizing request ({id(self)})")
-            auth = self.request.headers.get("Authorization")
+            header = self.request.headers.get("Authorization")
 
-            if not auth or len(auth.split()) != 2:
-                raise DecodeError
-
-            name, token = auth.split()
-            decoded = decode_jwt(token)
-
-            if name.lower() != "bearer" or not isinstance(decoded, dict):
-                raise DecodeError
-
-            try:
-                user_uuid = decoded["sub"]
-            except KeyError:
-                raise DecodeError
-
-            cmd = ModelGetCommand(user_uuid, User)
+            user_uuid = decode_header(header)
+            cmd = ModelGetCommand(user_uuid, User.NAME)
             event = self.application.message_bus.handle(cmd)
 
             if isinstance(event, ModelGotEvent):
-                event = self.application.message_bus.handle(cmd)
                 self.current_user = event.instance
                 logger.debug(f"request is authorized ({id(self)})")
                 return method(self, *args, **kwargs)
             else:
                 raise DecodeError
         except DecodeError:
-            raise HTTPError(401, responses[401])
+            raise HTTPError(401)
 
     return wrapper
+
+
+def jwt_authenticated_ws(method):
+    @functools.wraps(method)
+    def wrapper(self: RequestHandler, *args, **kwargs):
+        try:
+            logger.debug(f"authorizing request ({id(self)})")
+            header = self.request.headers.get("Authorization")
+
+            user_uuid = decode_header(header)
+            cmd = ModelGetCommand(user_uuid, User)
+            event = self.application.message_bus.handle(cmd)
+
+            if isinstance(event, ModelGotEvent):
+                self.current_user = event.instance
+                logger.debug(f"request is authorized ({id(self)})")
+                return method(self, *args, **kwargs)
+            else:
+                raise DecodeError
+        except DecodeError:
+            logger.debug(f"request is not authorized ({id(self)})")
+            self.close(3000)
+
+    return wrapper
+
+
+def decode_header(header):
+    if not header or len(header.split()) != 2:
+        raise DecodeError
+
+    name, token = header.split()
+    decoded = decode_jwt(token)
+    if name.lower() != "bearer" or not isinstance(decoded, dict):
+        raise DecodeError
+    try:
+        user_uuid = decoded["sub"]
+    except KeyError:
+        raise DecodeError
+
+    return user_uuid
 
 
 def encode_jwt(instance_uuid: str, secret=config.get_secret(), dt=timedelta(60)) -> str:

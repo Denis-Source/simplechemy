@@ -39,11 +39,12 @@ class ElementAlreadyHasInvolvedRecipeException(ElementAlreadyHasRecipeException)
 
 
 class IncompleteElementContent(ElementException):
-    def __init__(self, source):
+    def __init__(self, source, elements):
         self.source = source
+        self.elements = elements
 
     def __str__(self):
-        return f"incomplete element content from {self.source}"
+        return f"incomplete element content from {self.source}, no recipes for: {', '.join(self.elements)}"
 
 
 class IncorrectElementRecipe(ElementException):
@@ -186,6 +187,8 @@ class Element(BaseModel):
         cls.logger.debug(f"loaded ({Element.get_element_count()}) starting elements")
         cls.logger.debug("loading secondary elements")
 
+        not_found_recipes = set()
+        found_flag = True
         # secondary elements
         while Element.get_element_count() != total_elements:
             previous_count = cls.get_element_count()
@@ -194,6 +197,9 @@ class Element(BaseModel):
                     continue
 
                 result_name = line.split("=")[0].strip()
+                if found_flag:
+                    not_found_recipes.add(result_name)
+
                 recipe_names = [recipe_name.strip() for recipe_name in line.split("=")[1].strip().split("+")]
                 try:
                     all_there = all([Element.get(element_name) for element_name in recipe_names])
@@ -204,6 +210,8 @@ class Element(BaseModel):
                     new_element = Element(result_name, recipe=None)
                     recipe = Recipe(result=new_element,
                                     schema=[Element.get(element_name) for element_name in recipe_names])
+                    if result_name in not_found_recipes:
+                        not_found_recipes.remove(result_name)
                     try:
                         new_element.add_recipe(recipe)
                     except ElementAlreadyHasRecipeException:
@@ -214,7 +222,8 @@ class Element(BaseModel):
                         except ElementAlreadyHasInvolvedRecipeException:
                             pass
             if previous_count == cls.get_element_count():
-                raise IncompleteElementContent(filepath)
+                raise IncompleteElementContent(filepath, not_found_recipes)
+            found_flag = False
 
         cls.logger.debug(f"loaded total: ({Element.get_element_count()}) elements")
         return Element.list()

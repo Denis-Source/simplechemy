@@ -25,7 +25,7 @@ class TestGameServices(BaseTestModelServices):
         yield instance
         self.storage.delete(instance)
 
-    @pytest.fixture
+    @pytest.fixture(scope="module")
     def element_cls(self):
         filepath = config.get_element_content_path()
         Element.load_from_txt(filepath)
@@ -44,7 +44,7 @@ class TestGameServices(BaseTestModelServices):
 
     def test_created(self, reset_storage, saved_user):
         cmd = ModelCreateCommand(
-            model_cls=self.model_cls,
+            model_cls_name=self.model_cls.NAME,
             fields={
                 "name": "test name",
                 "creator_user": saved_user

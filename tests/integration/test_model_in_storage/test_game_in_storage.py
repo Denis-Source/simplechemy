@@ -12,7 +12,7 @@ class TestGameInMemoryStorage(TestEntityInMemoryStorage):
     storage = MemoryStorage()
     model_cls = Game
 
-    @pytest.fixture
+    @pytest.fixture(scope="module")
     def element_cls(self):
         filepath = config.get_element_content_path()
         Element.load_from_txt(filepath)

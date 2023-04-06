@@ -13,7 +13,7 @@ class TestGameLogic:
 
         yield instance
 
-    @pytest.fixture
+    @pytest.fixture(scope="module")
     def element_cls(self):
         filepath = config.get_element_content_path()
         Element.load_from_txt(filepath)
@@ -160,8 +160,8 @@ class TestGameLogic:
                         y=0
                     )
                     saved_instance.clear_elements_p()
-
-        assert set(saved_instance.unlocked_elements) == set(Element.list())
+        locked_elements = set(Element.list()) - set(saved_instance.unlocked_elements)
+        assert not locked_elements
 
     def test_move_element_p_but_wrong_game_uuid(self, starting_element, saved_instance, another_saved_instance,
                                                 saved_user):

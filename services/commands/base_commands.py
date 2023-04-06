@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-from typing import Union, Type
+from typing import Union
 
 from models.base import BaseModel
 from services.message import Message
@@ -12,19 +12,19 @@ class ModelCommand(Message):
 
 @dataclass
 class ModelCreateCommand(ModelCommand):
-    model_cls: Type[BaseModel]
+    model_cls_name: str
     fields: dict = field(default_factory=dict)
 
 
 @dataclass
 class ModelGetCommand(ModelCommand):
     uuid: str
-    model_cls: Type[BaseModel]
+    model_cls_name: str
 
 
 @dataclass
 class ModelListCommand(ModelCommand):
-    model_cls: Type[BaseModel]
+    model_cls_name: str
 
 
 @dataclass

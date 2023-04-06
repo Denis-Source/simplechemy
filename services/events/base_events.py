@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import List, Type
+from typing import List
 
 from models.base import BaseModel
 from services.message import Message
@@ -39,4 +39,4 @@ class ModelDeletedEvent(BaseEvent):
 @dataclass
 class InstanceNotExistEvent(BaseEvent):
     uuid: str
-    model_cls: Type[BaseModel]
+    model_cls_name: str
