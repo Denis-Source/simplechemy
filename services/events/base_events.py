@@ -37,6 +37,6 @@ class ModelDeletedEvent(BaseEvent):
 
 
 @dataclass
-class ModelNotExistEvent(BaseEvent):
+class InstanceNotExistEvent(BaseEvent):
     uuid: str
     model_cls: Type[BaseModel]

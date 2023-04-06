@@ -4,7 +4,7 @@ from typing import Union, Type
 from models.base import BaseModel, InstanceNotExist
 from services.commands.base_commands import ModelCreateCommand, ModelGetCommand, ModelListCommand, ModelDeleteCommand
 from services.events.base_events import ModelCreatedEvent, ModelGotEvent, ModelListedEvent, ModelDeletedEvent, \
-    ModelNotExistEvent
+    InstanceNotExistEvent
 
 
 class WrongModelClassCommandException(Exception):
@@ -26,10 +26,13 @@ class ModelHandlerService:
         if isinstance(instance_or_uuid, model_cls):
             return instance_or_uuid
         elif isinstance(instance_or_uuid, str):
-            return self.storage.get(
+            instance = self.storage.get(
                 model_cls=model_cls,
                 uuid=instance_or_uuid
             )
+            if not instance:
+                raise InstanceNotExist(instance_or_uuid, model_cls)
+            return instance
         else:
             raise WrongModelClassCommandException(instance_or_uuid)
 
@@ -41,12 +44,12 @@ class ModelHandlerService:
         self.storage.put(instance)
         return ModelCreatedEvent(instance)
 
-    def get(self, cmd: ModelGetCommand) -> Union[ModelGotEvent, ModelNotExistEvent]:
+    def get(self, cmd: ModelGetCommand) -> Union[ModelGotEvent, InstanceNotExistEvent]:
         self.logger.debug(f"getting {cmd.model_cls} with {cmd.uuid}")
         try:
-            instance = cmd.model_cls.get(
-                uuid=cmd.uuid,
-                storage=self.storage
+            instance = self.get_instance(
+                instance_or_uuid=cmd.uuid,
+                model_cls=cmd.model_cls
             )
             self.logger.debug(f"got {instance}")
             return ModelGotEvent(
@@ -54,7 +57,7 @@ class ModelHandlerService:
             )
         except InstanceNotExist:
             self.logger.debug(f"no {cmd.model_cls} found")
-            return ModelNotExistEvent(
+            return InstanceNotExistEvent(
                 uuid=cmd.uuid,
                 model_cls=cmd.model_cls
             )

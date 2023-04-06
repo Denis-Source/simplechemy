@@ -1,7 +1,7 @@
 import pytest
 
 from services.commands.base_commands import ModelCreateCommand, ModelListCommand, ModelGetCommand, ModelDeleteCommand
-from services.events.base_events import ModelNotExistEvent, ModelGotEvent, ModelListedEvent, ModelDeletedEvent
+from services.events.base_events import InstanceNotExistEvent, ModelGotEvent, ModelListedEvent, ModelDeletedEvent
 from services.message_bus import MessageBus
 from storage.memory import MemoryStorage
 
@@ -54,7 +54,7 @@ class BaseTestModelServices:
             self.model_cls
         )
         event = self.message_bus.handle(cmd)
-        assert isinstance(event, ModelNotExistEvent)
+        assert isinstance(event, InstanceNotExistEvent)
 
     def test_listed(self, saved_instance, reset_storage):
         cmd = ModelListCommand(

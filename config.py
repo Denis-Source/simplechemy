@@ -7,7 +7,7 @@ from storage.base import BaseStorage
 from storage.memory import MemoryStorage
 
 LOGGING_FORMAT = "%(asctime)s\t%(levelname)-7s\t%(name)-20s\t%(message)s"
-load_dotenv()
+JWT_ALGORITHM = "HS256"
 
 
 def get_logging_file():
@@ -36,3 +36,10 @@ def get_storage() -> BaseStorage:
 
 def get_element_content_path():
     return os.getenv("ELEMENT_CONTENT_PATH", "recipes.txt")
+
+
+def get_secret():
+    return os.getenv("SECRET", "very secret secret")
+
+
+load_dotenv()

@@ -34,7 +34,6 @@ class UserNotInGameEvent(UserEvent):
 
 
 @dataclass
-class UserVerifiedPassword(UserEvent):
+class UserVerifiedPasswordEvent(UserEvent):
     instance: User
-    plain_password: str
     is_correct: bool

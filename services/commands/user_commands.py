@@ -24,6 +24,6 @@ class UserLeaveGameCommand(UserCommand):
 
 
 @dataclass
-class UserVerifyPassword(UserCommand):
+class UserVerifyPasswordCommand(UserCommand):
     instance: Union[User, str]
     plain_password: str

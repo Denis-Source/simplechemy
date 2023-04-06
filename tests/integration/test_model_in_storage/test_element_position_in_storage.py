@@ -33,7 +33,6 @@ class TestElementPositionInMemoryStorage(TestEntityInMemoryStorage):
         )
 
         yield instance
-        instance.delete()
         self.element_cls.reset_all()
 
     def test_model_change(self, saved_instance):

@@ -5,6 +5,7 @@ from logging import getLogger
 from tornado.web import Application
 
 import config
+from app.handlers.auth.login_handler import LoginHandler
 from app.handlers.auth.register_handler import RegisterHandler
 from app.handlers.ping_handler import PingHandler
 from services.message_bus import MessageBus
@@ -33,7 +34,8 @@ class App(Application):
         }
         self._handlers = [
             (Routes.register, RegisterHandler),
-            (Routes.ping, PingHandler)
+            (Routes.ping, PingHandler),
+            (Routes.login, LoginHandler)
         ]
 
         super().__init__(self._handlers, None, None, **settings)

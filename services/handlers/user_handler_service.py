@@ -1,17 +1,35 @@
 import logging
 from typing import Union
 
+from models.base import InstanceNotExist
 from models.nonfungeble.game import Game
 from models.nonfungeble.user import UserAlreadyInGameException, UserNotInGameException, User
-from services.commands.user_commands import UserEnterGameCommand, UserLeaveGameCommand
+from services.commands.user_commands import UserEnterGameCommand, UserLeaveGameCommand, UserVerifyPasswordCommand
+from services.events.base_events import InstanceNotExistEvent
 from services.events.user_events import UserEnteredGameEvent, UserAlreadyInGameEvent, UserLeftGameEvent, \
-    UserNotInGameEvent
+    UserNotInGameEvent, UserVerifiedPasswordEvent
 from services.handlers.model_handler_service import ModelHandlerService
 
 
 class UserHandlerService(ModelHandlerService):
     NAME = "user handler"
     logger = logging.getLogger(NAME)
+
+    def verify_password(self, cmd: UserVerifyPasswordCommand) -> \
+            Union[UserVerifiedPasswordEvent, InstanceNotExistEvent]:
+        try:
+            instance: User = self.get_instance(cmd.instance, User)
+
+            is_correct = instance.verify_password(cmd.plain_password)
+            return UserVerifiedPasswordEvent(
+                instance=instance,
+                is_correct=is_correct
+            )
+        except InstanceNotExist:
+            return InstanceNotExistEvent(
+                uuid=cmd.instance,
+                model_cls=User
+            )
 
     def enter_game(self, cmd: UserEnterGameCommand) -> Union[UserEnteredGameEvent, UserAlreadyInGameEvent]:
         try:
@@ -57,6 +75,7 @@ class UserHandlerService(ModelHandlerService):
         handler = cls(storage)
 
         handlers.update({
+            UserVerifyPasswordCommand: handler.verify_password,
             UserEnterGameCommand: handler.enter_game,
             UserLeaveGameCommand: handler.leave_game
         })

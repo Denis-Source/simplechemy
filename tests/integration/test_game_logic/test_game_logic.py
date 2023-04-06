@@ -13,8 +13,6 @@ class TestGameLogic:
 
         yield instance
 
-        instance.delete()
-
     @pytest.fixture
     def element_cls(self):
         filepath = config.get_element_content_path()
@@ -32,8 +30,6 @@ class TestGameLogic:
 
         yield instance
 
-        instance.delete()
-
     @pytest.fixture
     def another_saved_instance(self, saved_user, element_cls, saved_instance):
         instance = Game(
@@ -43,8 +39,6 @@ class TestGameLogic:
         saved_user.enter_game(instance)
 
         yield instance
-
-        instance.delete()
 
     @pytest.fixture
     def starting_element(self, element_cls):

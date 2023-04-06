@@ -21,8 +21,9 @@ class TestGameServices(BaseTestModelServices):
     @pytest.fixture
     def saved_user(self, reset_storage):
         instance = User()
+        self.storage.put(instance)
         yield instance
-        instance.delete()
+        self.storage.delete(instance)
 
     @pytest.fixture
     def element_cls(self):

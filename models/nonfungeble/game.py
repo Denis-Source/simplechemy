@@ -113,7 +113,6 @@ class Game(Entity):
         )
 
         for used_ep in used_elements_p:
-            used_ep.delete()
             self.remove_element_p(used_ep)
 
         return new_element_p, used_elements_p

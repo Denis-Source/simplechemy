@@ -12,11 +12,14 @@ class RegisterHandler(BaseHandler):
     def post(self) -> None:
         self.logger.debug("registering new user")
         password = self.get_argument("password")
+        name = self.get_argument("name", None)
 
         cmd = ModelCreateCommand(
             User,
             fields={
-                "plain_password": password})
+                "plain_password": password,
+                "name": name}
+        )
         event = self.application.message_bus.handle(cmd)
 
         self.set_current_user(event.instance)

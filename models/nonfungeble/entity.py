@@ -1,11 +1,9 @@
 from __future__ import annotations
 
 from logging import getLogger
-from typing import List
 from uuid import uuid4
 
-import config
-from models.base import BaseModel, InstanceNotExist
+from models.base import BaseModel
 
 
 class Entity(BaseModel):
@@ -44,25 +42,6 @@ class Entity(BaseModel):
     def change(self, name, **kwargs) -> None:
         if name:
             self.name = name
-
-    @classmethod
-    def list(cls, storage=config.get_storage(), **kwargs) -> List[BaseModel]:
-        cls.logger.debug(f"listing {cls.NAME} instances")
-        return storage.list(cls)
-
-    @classmethod
-    def get(cls, uuid, storage=config.get_storage(), **kwargs) -> BaseModel:
-        instance = storage.get(cls, uuid)
-
-        cls.logger.debug(f"getting instance ({uuid})")
-        if not instance:
-            cls.logger.debug(f"instance ({uuid}) not found")
-            raise InstanceNotExist(uuid, cls)
-        return instance
-
-    def delete(self, storage=config.get_storage(), **kwargs) -> None:
-        self.logger.debug(f"deleting instance ({self})")
-        storage.delete(self)
 
     def as_dict(self) -> dict:
         return {
