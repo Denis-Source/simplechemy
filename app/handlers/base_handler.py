@@ -1,6 +1,6 @@
 import sys
 from logging import getLogger
-from typing import Optional
+from typing import Optional, Union
 
 from tornado.web import RequestHandler
 
@@ -18,7 +18,8 @@ class BaseHandler(RequestHandler):
     def write_error(self, status_code: int, **kwargs) -> None:
         _, error, _ = sys.exc_info()
         if hasattr(error, "log_message"):
-            error = error.log_message
+            if error.log_message:
+                error = error.log_message
 
         message = {"message": str(error)}
 
@@ -29,3 +30,8 @@ class BaseHandler(RequestHandler):
             message
         )
         self.finish()
+
+    def write(self, chunk: Union[str, bytes, dict]) -> None:
+        if isinstance(chunk, str):
+            chunk = {"message": chunk}
+        return super().write(chunk)

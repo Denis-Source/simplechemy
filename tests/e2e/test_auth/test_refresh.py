@@ -1,28 +1,16 @@
 import time
+from datetime import timedelta
 
 import pytest
 import requests
 
 import config
 from app.app import Routes
-from app.handlers.auth.jwt_utils import decode_jwt
+from app.handlers.auth.jwt_utils import decode_jwt, encode_jwt
 from tests.e2e.base_api_test import BaseAPITest
 
 
 class TestRefresh(BaseAPITest):
-    @pytest.fixture
-    def mock_password(self):
-        return "password"
-
-    @pytest.fixture
-    def registered_user(self, mock_password):
-        response = requests.post(
-            f"{config.get_api_url()}{Routes.register}",
-            {"password": "password"}
-        )
-        assert response.status_code == 200
-        return response.json()["instance"]
-
     @pytest.fixture
     def logged_response(self, mock_password, registered_user):
         user_uuid = registered_user["uuid"]
@@ -78,3 +66,16 @@ class TestRefresh(BaseAPITest):
             f"{config.get_api_url()}{Routes.refresh}"
         )
         assert response.status_code == 401
+
+    def test_refresh_expired_token(self, registered_user):
+        user_uuid = registered_user["uuid"]
+
+        invalid_token = encode_jwt(user_uuid, dt=timedelta(seconds=1))
+        time.sleep(2)
+
+        response = requests.post(
+            f"{config.get_api_url()}{Routes.refresh}",
+            headers={"Authorization": f"Bearer {invalid_token}"}
+        )
+
+        assert response.status_code == 200

@@ -1,14 +1,17 @@
 import functools
+import json
 from datetime import datetime, timedelta
+from http.client import responses
 from logging import getLogger
 from typing import Union
 
 import jwt
-from jwt.exceptions import DecodeError
+from jwt.exceptions import DecodeError, InvalidTokenError
 from tornado.web import HTTPError
 from tornado.web import RequestHandler
 
 import config
+from app.handlers.responses import Responses
 from models.nonfungeble.user import User
 from services.commands.base_commands import ModelGetCommand
 from services.events.base_events import ModelGotEvent
@@ -41,7 +44,7 @@ def jwt_authenticated(method):
                 return method(self, *args, **kwargs)
             else:
                 raise DecodeError
-        except DecodeError:
+        except (DecodeError, InvalidTokenError):
             raise HTTPError(401)
 
     return wrapper
@@ -55,7 +58,7 @@ def jwt_authenticated_ws(method):
             header = self.request.headers.get("Authorization")
 
             user_uuid = decode_header(header)
-            cmd = ModelGetCommand(user_uuid, User)
+            cmd = ModelGetCommand(user_uuid, User.NAME)
             event = self.application.message_bus.handle(cmd)
 
             if isinstance(event, ModelGotEvent):
@@ -64,19 +67,19 @@ def jwt_authenticated_ws(method):
                 return method(self, *args, **kwargs)
             else:
                 raise DecodeError
-        except DecodeError:
+        except (DecodeError, InvalidTokenError):
             logger.debug(f"request is not authorized ({id(self)})")
             self.close(3000)
 
     return wrapper
 
 
-def decode_header(header):
+def decode_header(header, options=OPTIONS):
     if not header or len(header.split()) != 2:
         raise DecodeError
 
     name, token = header.split()
-    decoded = decode_jwt(token)
+    decoded = decode_jwt(token, options=options)
     if name.lower() != "bearer" or not isinstance(decoded, dict):
         raise DecodeError
     try:
@@ -87,15 +90,17 @@ def decode_header(header):
     return user_uuid
 
 
-def encode_jwt(instance_uuid: str, secret=config.get_secret(), dt=timedelta(60)) -> str:
+def encode_jwt(instance_uuid: str, secret=config.get_secret(), dt=None) -> str:
     ts = datetime.utcnow()
+    if not dt:
+        dt = config.TOKEN_LIFETIME
 
     return jwt.encode(
         {
             "alg": config.JWT_ALGORITHM,
             "iss": config.get_api_url(),
             "iat": ts,
-            "exp": ts + config.TOKEN_LIFETIME,
+            "exp": ts + dt,
             "sub": instance_uuid
         },
         secret,
@@ -103,10 +108,10 @@ def encode_jwt(instance_uuid: str, secret=config.get_secret(), dt=timedelta(60))
     )
 
 
-def decode_jwt(token: Union[str, bytes]) -> Union[str, dict]:
+def decode_jwt(token: Union[str, bytes], options=OPTIONS) -> Union[str, dict]:
     return jwt.decode(
         token,
         config.get_secret(),
-        options=OPTIONS,
+        options=options,
         algorithms=[config.JWT_ALGORITHM]
     )

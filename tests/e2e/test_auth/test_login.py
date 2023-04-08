@@ -8,19 +8,6 @@ from tests.e2e.base_api_test import BaseAPITest
 
 
 class TestLogin(BaseAPITest):
-    @pytest.fixture
-    def mock_password(self):
-        return "password"
-
-    @pytest.fixture
-    def registered_user(self, mock_password):
-        response = requests.post(
-            f"{config.get_api_url()}{Routes.register}",
-            {"password": mock_password}
-        )
-        assert response.status_code == 200
-        return response.json()["instance"]
-
     @pytest.mark.usefixtures("app")
     def test_login_success(self, registered_user, mock_password):
         user_uuid = registered_user["uuid"]
@@ -74,17 +61,3 @@ class TestLogin(BaseAPITest):
         )
 
         assert response.status_code == 401
-
-    # def test_login_expired_token(self, registered_user):
-    #     # TODO move into refresh
-    #     user_uuid = registered_user["uuid"]
-    #
-    #     token = encode_jwt(user_uuid, dt=1)
-    #
-    #     response = requests.post(
-    #         f"{config.get_api_url()}{Routes.login}",
-    #         {"user_uuid": user_uuid,
-    #          "password": "invalid_password"}
-    #     )
-    #
-    #     assert response.status_code == 401

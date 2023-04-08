@@ -7,6 +7,7 @@ from multiprocessing import Process
 import pytest
 import requests
 from requests import ConnectTimeout
+from requests.exceptions import ConnectionError
 
 import config
 from app.app import App, Routes
@@ -28,7 +29,7 @@ def app():
         response = requests.get(f"{config.get_api_url()}{Routes.ping}", timeout=0.5)
         assert response.status_code == 200
         yield
-    except (ConnectTimeout, requests.exceptions.ConnectionError):
+    except (ConnectTimeout, ConnectionError):
         process = Process(target=run_app)
         process.start()
         time.sleep(1)

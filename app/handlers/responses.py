@@ -7,4 +7,7 @@ class Responses(dict, Enum):
     GENERAL = {"message": "unknown error"}
     NOT_FOUND = {"message": "resource not found"}
 
-    WS_OPENED = {"ws_connection": "opened"}
+    WS_OPENED = {"message": "ws opened"}
+    BAD_STATEMENT = {"message": "bad statement"}
+
+    UNAUTHORIZED = {"message": "unauthorized"}

@@ -10,6 +10,7 @@ from app.handlers.auth.refresh_handler import RefreshHandler
 from app.handlers.auth.register_handler import RegisterHandler
 from app.handlers.not_found_handler import NotFoundHandler
 from app.handlers.ping_handler import PingHandler
+from app.handlers.web_socket.web_socket_handler import WebSocketHandler
 from services.message_bus import MessageBus
 
 
@@ -21,7 +22,7 @@ class Routes(str, Enum):
 
     ping = r"/ping",
     room = r"/room",
-    user_ws = r"/user_ws"
+    ws = r"/ws"
 
 
 class App(Application):
@@ -39,7 +40,9 @@ class App(Application):
             (Routes.register, RegisterHandler),
             (Routes.ping, PingHandler),
             (Routes.login, LoginHandler),
-            (Routes.refresh, RefreshHandler)
+            (Routes.refresh, RefreshHandler),
+
+            (Routes.ws, WebSocketHandler)
         ]
 
         super().__init__(
