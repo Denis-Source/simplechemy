@@ -2,7 +2,7 @@ import pytest
 
 from services.commands.model_commands import ModelCreateCommand, ModelListCommand, ModelGetCommand, ModelDeleteCommand, \
     ModelChangeCommand
-from services.events.base_events import InstanceNotExistEvent, ModelGotEvent, ModelListedEvent, ModelDeletedEvent, \
+from services.events.model_events import InstanceNotExistEvent, ModelGotEvent, ModelListedEvent, ModelDeletedEvent, \
     ModelChangedEvent
 from services.message_bus import MessageBus
 from storage.memory import MemoryStorage

@@ -43,6 +43,7 @@ class TestMessage:
 
         @dataclass
         class TestMessageClass(Message):
+            NAME = "test_message"
             field1: int
             field2: str
             field3: TestModelTwo
@@ -56,6 +57,7 @@ class TestMessage:
 
     def test_as_dict_conversion(self, complex_instance):
         assert complex_instance.as_dict() == {
+            "message": "test_message",
             "field1": 0,
             "field2": "0",
             "field3": {

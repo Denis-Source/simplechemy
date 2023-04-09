@@ -5,7 +5,7 @@ from tornado.web import HTTPError
 from app.handlers.auth.jwt_utils import encode_jwt
 from app.handlers.base_handler import BaseHandler
 from services.commands.user_commands import UserVerifyPasswordCommand
-from services.events.base_events import InstanceNotExistEvent
+from services.events.model_events import InstanceNotExistEvent
 
 
 class LoginHandler(BaseHandler):

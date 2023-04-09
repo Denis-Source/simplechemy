@@ -5,6 +5,8 @@ from shared.dictable import Dictable
 
 @dataclass
 class Message(Dictable):
+    NAME = "message"
+
     @staticmethod
     def convert(obj):
         if type(obj) in [int, bool, str, float, dict]:
@@ -21,4 +23,5 @@ class Message(Dictable):
         for field in fields(self):
             value = getattr(self, field.name)
             dict_[field.name] = self.convert(value)
+            dict_["message"] = self.NAME
         return dict_

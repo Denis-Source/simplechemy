@@ -9,7 +9,7 @@ from app.handlers.auth.jwt_utils import jwt_authenticated_ws
 from app.handlers.base_handler import BaseHandler
 from app.handlers.responses import Responses
 from models.nonfungeble.user import User
-from services.events.base_events import BaseEvent
+from services.events.model_events import ModelEvent
 
 
 class BaseWebSocketHandler(WebSocketHandler, BaseHandler):
@@ -39,22 +39,22 @@ class BaseWebSocketHandler(WebSocketHandler, BaseHandler):
         self.logger.debug(f"closed {self.NAME} connection ({id(self)})")
         self._remove_connection(self.current_user)
 
-    def broadcast(self, event: BaseEvent, user_list: List[User]) -> None:
+    def broadcast(self, event: ModelEvent, user_list: List[User]) -> None:
         for user in user_list:
             connection = self._connections.get(user.uuid)
             if connection:
                 connection.write(event.as_dict())
 
-    def on_message(self, message: str) -> None:
+    def on_message(self, request: str) -> None:
         try:
             self.logger.debug(f"handling websocket message for {self.current_user}")
-            message = json.loads(message)
+            request = json.loads(request)
 
-            method = self.get_methods()[message["statement"]]
-            payload = message.get("payload", {})
+            method = self.get_methods()[request["message"]]
+            payload = request.get("payload", {})
             method(
                 payload=payload
             )
         except (JSONDecodeError, KeyError, NotImplementedError):
             self.logger.info(f"bad statement from {self.current_user}")
-            self.write_message(Responses.BAD_STATEMENT)
+            self.write_message(Responses.BAD_REQUEST)

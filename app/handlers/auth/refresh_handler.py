@@ -20,6 +20,7 @@ class RefreshHandler(BaseHandler):
 
             token = encode_jwt(user_uuid)
             self.write({
+                "message": "token generated",
                 "token": token
             })
         except (DecodeError, InvalidTokenError):

@@ -4,7 +4,7 @@ from models.nonfungeble.game import Game
 from models.nonfungeble.user import User
 from services.commands.model_commands import ModelCreateCommand, ModelChangeCommand
 from services.commands.user_commands import UserEnterGameCommand, UserLeaveGameCommand, UserVerifyPasswordCommand
-from services.events.base_events import InstanceNotExistEvent, ModelChangedEvent
+from services.events.model_events import InstanceNotExistEvent, ModelChangedEvent
 from services.events.user_events import UserEnteredGameEvent, UserAlreadyInGameEvent, UserLeftGameEvent, \
     UserVerifiedPasswordEvent
 from services.handlers.user_handler_service import UserHandlerService

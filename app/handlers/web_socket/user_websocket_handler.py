@@ -1,6 +1,6 @@
 from logging import getLogger
 
-from app.handlers.statements import Statements
+from app.handlers.allowed_commands import AllowedCommands
 from app.handlers.web_socket.base_websocket_handler import BaseWebSocketHandler
 from models.nonfungeble.user import User
 from services.commands.model_commands import ModelGetCommand, ModelChangeCommand
@@ -17,7 +17,7 @@ class UserWebSocketHandler(BaseWebSocketHandler):
         )
         event = self.application.message_bus.handle(cmd)
         self.current_user = event.instance
-        self.write_message({"statement": Statements.GOT_USER} | event.as_dict())
+        self.write_message(event.as_dict())
 
     def change_user(self, payload: dict):
         cmd = ModelChangeCommand(
@@ -25,4 +25,4 @@ class UserWebSocketHandler(BaseWebSocketHandler):
             fields=payload["fields"]
         )
         event = self.application.message_bus.handle(cmd)
-        self.write_message({"statement": Statements.CHANGED_USER} | event.as_dict())
+        self.write_message(event.as_dict())

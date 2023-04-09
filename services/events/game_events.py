@@ -4,11 +4,11 @@ from typing import Tuple, List
 from models.fungeble.element import Element
 from models.nonfungeble.element_position import ElementPosition
 from models.nonfungeble.game import Game
-from services.events.base_events import BaseEvent
+from services.events.model_events import ModelEvent
 
 
 @dataclass
-class GameEvent(BaseEvent):
+class GameEvent(ModelEvent):
     pass
 
 

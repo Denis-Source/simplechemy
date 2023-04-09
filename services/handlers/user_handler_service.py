@@ -5,7 +5,7 @@ from models.base import InstanceNotExist
 from models.nonfungeble.game import Game
 from models.nonfungeble.user import UserAlreadyInGameException, UserNotInGameException, User
 from services.commands.user_commands import UserEnterGameCommand, UserLeaveGameCommand, UserVerifyPasswordCommand
-from services.events.base_events import InstanceNotExistEvent
+from services.events.model_events import InstanceNotExistEvent
 from services.events.user_events import UserEnteredGameEvent, UserAlreadyInGameEvent, UserLeftGameEvent, \
     UserNotInGameEvent, UserVerifiedPasswordEvent
 from services.handlers.model_handler_service import ModelHandlerService

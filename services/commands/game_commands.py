@@ -15,6 +15,8 @@ class GameCommand(ModelCommand):
 
 @dataclass
 class GameAddElementPCommand(GameCommand):
+    NAME = "game_add_element_p_cmd"
+
     instance: Union[Game, str]
     element: Union[Element, str]
     x: int = 0
@@ -23,12 +25,16 @@ class GameAddElementPCommand(GameCommand):
 
 @dataclass
 class GameRemoveElementPCommand(GameCommand):
+    NAME = "game_remove_element_p_cmd"
+
     instance: Union[Game, str]
     element_p: Union[ElementPosition, str]
 
 
 @dataclass
 class GameMoveElementPCommand(GameCommand):
+    NAME = "game_move_element_p_cmd"
+
     instance: Union[Game, str]
     element_p: Union[ElementPosition, str]
     x: int
@@ -39,4 +45,6 @@ class GameMoveElementPCommand(GameCommand):
 
 @dataclass
 class GameClearElementsPCommand(GameCommand):
+    NAME = "game_clear_elements_p_command"
+
     instance: Union[Game, str]

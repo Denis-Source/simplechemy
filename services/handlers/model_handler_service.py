@@ -6,7 +6,7 @@ from models.nonfungeble.game import Game
 from models.nonfungeble.user import User
 from services.commands.model_commands import ModelCreateCommand, ModelGetCommand, ModelListCommand, ModelDeleteCommand, \
     ModelChangeCommand
-from services.events.base_events import ModelCreatedEvent, ModelGotEvent, ModelListedEvent, ModelDeletedEvent, \
+from services.events.model_events import ModelCreatedEvent, ModelGotEvent, ModelListedEvent, ModelDeletedEvent, \
     InstanceNotExistEvent, ModelChangedEvent
 
 

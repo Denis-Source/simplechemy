@@ -24,7 +24,7 @@ class BaseHandler(RequestHandler):
         message = {"message": str(error)}
 
         if not str(error):
-            message = Responses.GENERAL
+            message = Responses.GENERAL_ERROR
 
         self.write(
             message

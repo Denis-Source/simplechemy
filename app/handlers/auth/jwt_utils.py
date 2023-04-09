@@ -11,7 +11,7 @@ from tornado.web import RequestHandler
 import config
 from models.nonfungeble.user import User
 from services.commands.model_commands import ModelGetCommand
-from services.events.base_events import ModelGotEvent
+from services.events.model_events import ModelGotEvent
 
 OPTIONS = {
     "verify_signature": True,

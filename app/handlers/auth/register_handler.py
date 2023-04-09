@@ -23,7 +23,5 @@ class RegisterHandler(BaseHandler):
         event = self.application.message_bus.handle(cmd)
 
         self.set_current_user(event.instance)
-        self.write(
-            event.as_dict()
-        )
+        self.write(event.as_dict())
         self.logger.debug(f"{event.instance} registered")

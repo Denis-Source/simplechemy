@@ -1,26 +1,14 @@
 from enum import Enum
 
 
-class Statements(str, Enum):
+class AllowedCommands(str, Enum):
     GET_USER = "get_user"
-    GOT_USER = "got_user"
-
-    NOT_EXIST = "not exist"
-
     CHANGE_USER = "change_user"
-    CHANGED_USER = "changed_user"
 
     CREATE_GAME = "create_game"
-    CREATED_GAME = "created_game"
-
     GET_GAME = "get_game"
-    GOT_GAME = "got_game"
-
     LIST_GAME = "list_game"
-    LISTED_GAME = "listed_game"
-
     DELETE_GAME = "delete_game"
-    DELETED_GAME = "deleted_game"
 
     # GOT = "got_user"
     #
