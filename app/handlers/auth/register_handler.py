@@ -2,7 +2,7 @@ from logging import getLogger
 
 from app.handlers.base_handler import BaseHandler
 from models.nonfungeble.user import User
-from services.commands.base_commands import ModelCreateCommand
+from services.commands.model_commands import ModelCreateCommand
 
 
 class RegisterHandler(BaseHandler):

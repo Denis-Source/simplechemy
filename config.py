@@ -1,6 +1,6 @@
 import os
 from datetime import timedelta
-from logging import DEBUG
+from logging import INFO
 
 from dotenv import load_dotenv
 
@@ -17,7 +17,7 @@ def get_logging_file():
 
 
 def get_logging_level():
-    return int(os.getenv("LOGGING_LEVEL", DEBUG))
+    return int(os.getenv("LOGGING_LEVEL", INFO))
 
 
 def get_api_port():

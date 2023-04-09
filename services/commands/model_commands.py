@@ -29,10 +29,11 @@ class ModelListCommand(ModelCommand):
 
 @dataclass
 class ModelChangeCommand(ModelCommand):
-    instance: Union[BaseModel, str]
+    instance: BaseModel
     fields: dict
 
 
 @dataclass
 class ModelDeleteCommand(ModelCommand):
     instance: Union[BaseModel, str]
+    model_cls_name: str

@@ -4,9 +4,10 @@ from typing import Union, Type
 from models.base import BaseModel, InstanceNotExist
 from models.nonfungeble.game import Game
 from models.nonfungeble.user import User
-from services.commands.base_commands import ModelCreateCommand, ModelGetCommand, ModelListCommand, ModelDeleteCommand
+from services.commands.model_commands import ModelCreateCommand, ModelGetCommand, ModelListCommand, ModelDeleteCommand, \
+    ModelChangeCommand
 from services.events.base_events import ModelCreatedEvent, ModelGotEvent, ModelListedEvent, ModelDeletedEvent, \
-    InstanceNotExistEvent
+    InstanceNotExistEvent, ModelChangedEvent
 
 
 class WrongModelClassCommandException(Exception):
@@ -30,9 +31,7 @@ class ModelHandlerService:
         self.storage = storage
 
     def get_instance(self, instance_or_uuid: Union[BaseModel, str], model_cls) -> BaseModel:
-        if isinstance(instance_or_uuid, model_cls):
-            return instance_or_uuid
-        elif isinstance(instance_or_uuid, str):
+        if isinstance(instance_or_uuid, str):
             instance = self.storage.get(
                 model_cls=model_cls,
                 uuid=instance_or_uuid
@@ -40,6 +39,8 @@ class ModelHandlerService:
             if not instance:
                 raise InstanceNotExist(instance_or_uuid, model_cls)
             return instance
+        elif isinstance(instance_or_uuid, model_cls):
+            return instance_or_uuid
         else:
             raise WrongModelClassCommandException(instance_or_uuid)
 
@@ -76,6 +77,13 @@ class ModelHandlerService:
                 model_cls_name=cmd.model_cls_name
             )
 
+    def change(self, cmd: ModelChangeCommand) -> ModelChangedEvent:
+
+        self.logger.debug(f"changing {cmd.instance}")
+        cmd.instance.change(**cmd.fields)
+        self.storage.put(cmd.instance)
+        return ModelChangedEvent(cmd.instance)
+
     def list(self, cmd: ModelListCommand) -> ModelListedEvent:
         self.logger.debug(f"listing {cmd.model_cls_name}")
 
@@ -86,14 +94,20 @@ class ModelHandlerService:
             instances=instances
         )
 
-    def delete(self, cmd: ModelDeleteCommand) -> ModelDeletedEvent:
+    def delete(self, cmd: ModelDeleteCommand) -> Union[ModelDeletedEvent, InstanceNotExist]:
         self.logger.debug(f"deleting {cmd.instance}")
 
-        instance = self.get_instance(cmd.instance, cmd.instance.__class__)
-        self.storage.delete(instance)
-        return ModelDeletedEvent(
-            instance=instance
-        )
+        try:
+            instance = self.get_instance(cmd.instance, self.get_model_cls(cmd.model_cls_name))
+            self.storage.delete(instance)
+            return ModelDeletedEvent(
+                instance=instance
+            )
+        except InstanceNotExist:
+            return InstanceNotExistEvent(
+                cmd.instance,
+                model_cls_name=cmd.model_cls_name
+            )
 
     @classmethod
     def get_handlers(cls, storage) -> dict:
@@ -102,6 +116,7 @@ class ModelHandlerService:
         return {
             ModelCreateCommand: handler.create,
             ModelGetCommand: handler.get,
+            ModelChangeCommand: handler.change,
             ModelListCommand: handler.list,
             ModelDeleteCommand: handler.delete,
         }

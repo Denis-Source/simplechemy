@@ -165,7 +165,7 @@ class Element(BaseModel):
     def load_from_txt(cls, filepath: str):
         # TODO REFACTOR
         cls.reset_all()
-        cls.logger.debug(f"loading {cls.NAME} from .txt file")
+        cls.logger.info(f"loading {cls.NAME} from {filepath} file")
 
         with open(filepath, "r") as f:
             lines = f.readlines()
@@ -182,7 +182,8 @@ class Element(BaseModel):
                     recipes=[],
                     recipe=None
                 )
-                cls._starting.append(element)
+                if element not in cls._starting:
+                    cls._starting.append(element)
 
         cls.logger.debug(f"loaded ({Element.get_element_count()}) starting elements")
         cls.logger.debug("loading secondary elements")

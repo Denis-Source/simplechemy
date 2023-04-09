@@ -8,10 +8,7 @@ from tornado.websocket import WebSocketHandler
 from app.handlers.auth.jwt_utils import jwt_authenticated_ws
 from app.handlers.base_handler import BaseHandler
 from app.handlers.responses import Responses
-from app.handlers.statements import Statements
-from models.base import BaseModel
 from models.nonfungeble.user import User
-from services.commands.base_commands import ModelGetCommand
 from services.events.base_events import BaseEvent
 
 
@@ -21,11 +18,8 @@ class BaseWebSocketHandler(WebSocketHandler, BaseHandler):
 
     _connections = {}
 
-    def __init__(self, application, request, **kwargs):
-        super().__init__(application, request, **kwargs)
-        self.methods = {
-            Statements.GET_INSTANCE: self.get_instance
-        }
+    def get_methods(self):
+        raise NotImplementedError
 
     def _add_connection(self, user: User) -> None:
         if user:
@@ -51,24 +45,17 @@ class BaseWebSocketHandler(WebSocketHandler, BaseHandler):
             if connection:
                 connection.write(event.as_dict())
 
-    def get_instance(self, payload: dict) -> BaseModel:
-        try:
-            cmd = ModelGetCommand(
-                model_cls_name=payload["model"],
-                uuid=payload["uuid"]
-            )
-            event = self.application.message_bus.handle(cmd)
-            return event.as_dict()
-        except (KeyError, NotImplementedError):
-            self.write_message(Responses.BAD_STATEMENT)
-
     def on_message(self, message: str) -> None:
+        methods = self.get_methods()
         try:
-            self.logger.debug(f"handling websocket {self.model_cls.NAME} message")
+            self.logger.debug(f"handling websocket message for {self.current_user}")
             message = json.loads(message)
 
-            method = self.methods[message["statement"]]
-            method(message["payload"])
-        except (JSONDecodeError, KeyError):
+            method = self.get_methods()[message["statement"]]
+            payload = message.get("payload", {})
+            method(
+                payload=payload
+            )
+        except (JSONDecodeError, KeyError, NotImplementedError):
             self.logger.info(f"bad statement from {self.current_user}")
-            self.write_message()
+            self.write_message(Responses.BAD_STATEMENT)

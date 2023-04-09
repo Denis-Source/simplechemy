@@ -39,7 +39,7 @@ class Entity(BaseModel):
 
         return instance
 
-    def change(self, name, **kwargs) -> None:
+    def change(self, name=None, **kwargs) -> None:
         if name:
             self.name = name
 

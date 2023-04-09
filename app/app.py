@@ -56,6 +56,7 @@ class App(Application):
         self.message_bus = MessageBus(self.storage)
 
     async def _main(self):
+        self.logger.info(f"running on {config.get_api_url()}:{config.get_api_port()}")
         self.listen(config.get_api_port())
 
         shutdown_event = asyncio.Event()

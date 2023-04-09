@@ -28,7 +28,6 @@ class ModelListedEvent(BaseEvent):
 @dataclass
 class ModelChangedEvent(BaseEvent):
     instance: BaseModel
-    fields: dict
 
 
 @dataclass

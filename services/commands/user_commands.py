@@ -3,7 +3,7 @@ from typing import Union
 
 from models.nonfungeble.game import Game
 from models.nonfungeble.user import User
-from services.commands.base_commands import ModelCommand
+from services.commands.model_commands import ModelCommand
 
 
 @dataclass

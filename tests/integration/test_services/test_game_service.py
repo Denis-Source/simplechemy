@@ -5,13 +5,13 @@ from models.fungeble.element import Element, IncorrectElementRecipe
 from models.nonfungeble.element_position import ElementPosition
 from models.nonfungeble.game import Game
 from models.nonfungeble.user import User
-from services.commands.base_commands import ModelCreateCommand
+from services.commands.model_commands import ModelCreateCommand
 from services.commands.game_commands import GameAddElementPCommand, GameRemoveElementPCommand, GameMoveElementPCommand
 from services.events.game_events import GameAddedElementPEvent, GameNotUnlockedElementEvent, GameElementNotExistEvent, \
     GameRemovedElementPEvent, GameElementPNotInGameEvent, GameMovedElementPEvent, GameElementPOutOfBoundsEvent, \
     GameNewElementCraftedEvent
 from services.handlers.game_handler_service import GameHandlerService
-from tests.integration.test_services.base_model_service import BaseTestModelServices
+from tests.integration.test_services.base_test_model_service import BaseTestModelServices
 
 
 class TestGameServices(BaseTestModelServices):

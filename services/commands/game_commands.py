@@ -5,7 +5,7 @@ from models.fungeble.element import Element
 from models.nonfungeble.element_position import ElementPosition
 from models.nonfungeble.game import Game
 from models.nonfungeble.user import User
-from services.commands.base_commands import ModelCommand
+from services.commands.model_commands import ModelCommand
 
 
 @dataclass

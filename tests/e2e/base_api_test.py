@@ -1,5 +1,7 @@
 import pytest
+import pytest_asyncio
 import requests
+import websockets
 
 import config
 from app.app import Routes
@@ -34,3 +36,10 @@ class BaseAPITest:
     @pytest.fixture(scope="session")
     def access_header(self, access_token):
         return {"Authorization": f"bearer {access_token}"}
+
+    @pytest_asyncio.fixture
+    async def opened_connection(self, access_header):
+        async with websockets.connect(f"{config.get_api_url(False)}{Routes.ws}",
+                                      extra_headers=access_header) as websocket:
+            message = await websocket.recv()
+            yield websocket

@@ -2,13 +2,13 @@ import pytest
 
 from models.nonfungeble.game import Game
 from models.nonfungeble.user import User
-from services.commands.base_commands import ModelCreateCommand
+from services.commands.model_commands import ModelCreateCommand, ModelChangeCommand
 from services.commands.user_commands import UserEnterGameCommand, UserLeaveGameCommand, UserVerifyPasswordCommand
-from services.events.base_events import InstanceNotExistEvent
+from services.events.base_events import InstanceNotExistEvent, ModelChangedEvent
 from services.events.user_events import UserEnteredGameEvent, UserAlreadyInGameEvent, UserLeftGameEvent, \
     UserVerifiedPasswordEvent
 from services.handlers.user_handler_service import UserHandlerService
-from tests.integration.test_services.base_model_service import BaseTestModelServices
+from tests.integration.test_services.base_test_model_service import BaseTestModelServices
 
 
 class TestUserServices(BaseTestModelServices):
@@ -62,6 +62,27 @@ class TestUserServices(BaseTestModelServices):
         assert event.instance == self.storage.get(User, saved_instance.uuid)
         assert event.instance.name == cmd.fields.get("name")
         assert event.instance.verify_password(cmd.fields.get("plain_password"))
+
+    def test_changed_password_success(self, saved_instance, reset_storage):
+        new_password = "new password"
+        fields = {
+            "plain_password": new_password
+        }
+        cmd = ModelChangeCommand(
+            saved_instance,
+            fields
+        )
+        event = self.message_bus.handle(cmd)
+        assert isinstance(event, ModelChangedEvent)
+
+        cmd = UserVerifyPasswordCommand(
+            saved_instance,
+            new_password
+        )
+
+        event = self.message_bus.handle(cmd)
+        assert isinstance(event, UserVerifiedPasswordEvent)
+        assert event.is_correct
 
     def test_password_verified_success(self, saved_instance):
         cmd = UserVerifyPasswordCommand(

@@ -2,7 +2,7 @@ from dataclasses import dataclass
 
 import pytest
 
-from services.commands.base_commands import ModelCommand
+from services.commands.model_commands import ModelCommand
 from services.message_bus import MessageBus, NoHandlerAvailableException
 from storage.memory import MemoryStorage
 

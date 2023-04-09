@@ -36,7 +36,7 @@ class User(Entity):
 
         self.game_uuid = None
 
-    def change(self, name, plain_password=None, to_save=True, **kwargs) -> None:
+    def change(self, name=None, plain_password=None, to_save=True, **kwargs) -> None:
         if plain_password:
             self.password = self.hash_password(plain_password)
 
