@@ -10,6 +10,9 @@ class AllowedCommands(str, Enum):
     LIST_GAME = "list_game"
     DELETE_GAME = "delete_game"
 
+    ENTER_GAME = "enter_game"
+    LEAVE_GAME = "leave_game"
+
     # GOT = "got_user"
     #
     # CHANGE = "change_user"

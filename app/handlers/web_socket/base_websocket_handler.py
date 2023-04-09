@@ -9,7 +9,14 @@ from app.handlers.auth.jwt_utils import jwt_authenticated_ws
 from app.handlers.base_handler import BaseHandler
 from app.handlers.responses import Responses
 from models.nonfungeble.user import User
-from services.events.model_events import ModelEvent
+
+
+class UserAlreadyConnectedException(Exception):
+    def __init__(self, user: User):
+        self.user = user
+
+    def __str__(self):
+        return f"{self.user} already has ws connection"
 
 
 class BaseWebSocketHandler(WebSocketHandler, BaseHandler):
@@ -23,27 +30,40 @@ class BaseWebSocketHandler(WebSocketHandler, BaseHandler):
 
     def _add_connection(self, user: User) -> None:
         if user:
-            self._connections[user.uuid] = self
+            if user.uuid not in self._connections:
+                self._connections[user.uuid] = self
+            else:
+                raise UserAlreadyConnectedException(user)
 
     def _remove_connection(self, user: User = None) -> None:
         if user:
-            self._connections.pop(user.uuid)
+            if user.uuid in self._connections:
+                self._connections.pop(user.uuid)
 
     @jwt_authenticated_ws
     def open(self) -> None:
-        self.logger.debug(f"opened {self.NAME} connection ({id(self)})")
-        self._add_connection(self.current_user)
-        self.write_message(Responses.WS_OPENED)
+        self.logger.info(f"opened {self.NAME} connection ({id(self)})")
+        try:
+            self._add_connection(self.current_user)
+            self.write_message(Responses.WS_OPENED)
+        except UserAlreadyConnectedException as e:
+            self.logger.info(e)
+            self.close()
 
     def on_close(self) -> None:
-        self.logger.debug(f"closed {self.NAME} connection ({id(self)})")
+        self.logger.info(f"closed {self.NAME} connection ({id(self)})")
         self._remove_connection(self.current_user)
 
-    def broadcast(self, event: ModelEvent, user_list: List[User]) -> None:
-        for user in user_list:
-            connection = self._connections.get(user.uuid)
+    def broadcast(self, message: dict, user_list: List[User] = None) -> None:
+        if user_list is None:
+            connection_uuids = self._connections.keys()
+        else:
+            connection_uuids = [user.uuid for user in user_list]
+
+        for cu in connection_uuids:
+            connection = self._connections.get(cu)
             if connection:
-                connection.write(event.as_dict())
+                connection.write_message(message)
 
     def on_message(self, request: str) -> None:
         try:

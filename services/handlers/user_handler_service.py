@@ -31,7 +31,8 @@ class UserHandlerService(ModelHandlerService):
                 model_cls_name=User.NAME
             )
 
-    def enter_game(self, cmd: UserEnterGameCommand) -> Union[UserEnteredGameEvent, UserAlreadyInGameEvent]:
+    def enter_game(self, cmd: UserEnterGameCommand) -> \
+            Union[UserEnteredGameEvent, UserAlreadyInGameEvent, InstanceNotExistEvent]:
         try:
             instance: User = self.get_instance(cmd.instance, User)
             game: Game = self.get_instance(cmd.game, Game)
@@ -48,6 +49,11 @@ class UserHandlerService(ModelHandlerService):
             return UserAlreadyInGameEvent(
                 instance=instance,
                 game=game
+            )
+        except InstanceNotExist:
+            return InstanceNotExistEvent(
+                uuid=cmd.game,
+                model_cls_name=Game.NAME
             )
 
     def leave_game(self, cmd: UserLeaveGameCommand) -> Union[UserLeftGameEvent, UserNotInGameEvent]:

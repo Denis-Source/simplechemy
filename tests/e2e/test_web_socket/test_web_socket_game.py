@@ -2,7 +2,6 @@ import json
 from uuid import uuid4
 
 import pytest
-import pytest_asyncio
 
 from app.handlers.allowed_commands import AllowedCommands
 from models.nonfungeble.game import Game
@@ -13,22 +12,10 @@ from tests.e2e.base_api_test import BaseAPITest
 
 
 class TestWebSocketGame(BaseAPITest):
-    @pytest_asyncio.fixture
-    async def created_game(self, opened_connection):
-        name = "test game"
-        await opened_connection.send(json.dumps({
-            "message": AllowedCommands.CREATE_GAME,
-            "payload": {
-                "fields": {"name": name}
-            }
-        }))
-        response = json.loads(await opened_connection.recv())
-        return response["instance"]
-
     @pytest.mark.asyncio
     @pytest.mark.timeout(conftest.TIMEOUT)
     @pytest.mark.usefixtures("app")
-    async def test_game_created_success(self, opened_connection):
+    async def test_game_created_success(self, opened_connection, another_opened_connection):
         name = "game name"
         await opened_connection.send(json.dumps({
             "message": AllowedCommands.CREATE_GAME,
@@ -36,10 +23,14 @@ class TestWebSocketGame(BaseAPITest):
                 "fields": {"name": name}
             }
         }))
-        response = json.loads(await opened_connection.recv())
-        assert response["message"] == ModelCreatedEvent.NAME
-        assert response["instance"]["name"] == name
-        assert response["instance"]["type"] == Game.NAME
+        response1 = json.loads(await opened_connection.recv())
+        response2 = json.loads(await another_opened_connection.recv())
+
+        assert response1 == response2
+
+        assert response1["message"] == ModelCreatedEvent.NAME
+        assert response1["instance"]["name"] == name
+        assert response1["instance"]["type"] == Game.NAME
 
     @pytest.mark.asyncio
     @pytest.mark.timeout(conftest.TIMEOUT)
@@ -83,16 +74,20 @@ class TestWebSocketGame(BaseAPITest):
     @pytest.mark.asyncio
     @pytest.mark.timeout(conftest.TIMEOUT)
     @pytest.mark.usefixtures("app")
-    async def test_game_deleted_success(self, opened_connection, created_game):
+    async def test_game_deleted_success(self, opened_connection, another_opened_connection, created_game):
         await opened_connection.send(json.dumps(
             {"message": AllowedCommands.DELETE_GAME,
              "payload": {
                  "uuid": created_game["uuid"]
              }}
         ))
-        response = json.loads(await opened_connection.recv())
-        assert response["message"] == ModelDeletedEvent.NAME
-        assert response["instance"]["uuid"] == created_game["uuid"]
+
+        response1 = json.loads(await opened_connection.recv())
+        response2 = json.loads(await another_opened_connection.recv())
+
+        assert response1 == response2
+        assert response1["message"] == ModelDeletedEvent.NAME
+        assert response1["instance"]["uuid"] == created_game["uuid"]
 
         await opened_connection.send(json.dumps({
             "message": AllowedCommands.GET_GAME,
@@ -100,8 +95,9 @@ class TestWebSocketGame(BaseAPITest):
                 "uuid": str(uuid4)
             }
         }))
-        response = json.loads(await opened_connection.recv())
-        assert response["message"] == InstanceNotExistEvent.NAME
+        response1 = json.loads(await opened_connection.recv())
+
+        assert response1["message"] == InstanceNotExistEvent.NAME
 
     @pytest.mark.asyncio
     @pytest.mark.timeout(conftest.TIMEOUT)

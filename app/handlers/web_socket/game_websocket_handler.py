@@ -1,10 +1,8 @@
 from logging import getLogger
 
-from app.handlers.allowed_commands import AllowedCommands
 from app.handlers.web_socket.base_websocket_handler import BaseWebSocketHandler
 from models.nonfungeble.game import Game
 from services.commands.model_commands import ModelGetCommand, ModelCreateCommand, ModelListCommand, ModelDeleteCommand
-from services.events.model_events import ModelGotEvent, ModelDeletedEvent
 
 
 class GameWebSocketHandler(BaseWebSocketHandler):
@@ -17,7 +15,7 @@ class GameWebSocketHandler(BaseWebSocketHandler):
             fields=payload.get("fields", {}) | {"creator_user": self.current_user}
         )
         event = self.application.message_bus.handle(cmd)
-        self.write_message(event.as_dict())
+        self.broadcast(event.as_dict())
 
     def get_game(self, payload: dict):
         cmd = ModelGetCommand(
@@ -40,4 +38,4 @@ class GameWebSocketHandler(BaseWebSocketHandler):
             model_cls_name=Game.NAME
         )
         event = self.application.message_bus.handle(cmd)
-        self.write_message(event.as_dict())
+        self.broadcast(event.as_dict())

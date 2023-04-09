@@ -1,3 +1,5 @@
+from uuid import uuid4
+
 import pytest
 
 from models.nonfungeble.game import Game
@@ -154,6 +156,14 @@ class TestUserServices(BaseTestModelServices):
 
         event = self.message_bus.handle(cmd)
         assert isinstance(event, UserAlreadyInGameEvent)
+
+    def test_enter_game_not_exist(self, saved_instance, reset_storage):
+        cmd = UserEnterGameCommand(
+            instance=saved_instance,
+            game=str(uuid4())
+        )
+        event = self.message_bus.handle(cmd)
+        assert isinstance(event, InstanceNotExistEvent)
 
     def test_user_left_game(self, saved_game, saved_instance, reset_storage):
         cmd = UserEnterGameCommand(

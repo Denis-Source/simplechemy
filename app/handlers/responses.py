@@ -11,3 +11,4 @@ class Responses(dict, Enum):
     BAD_REQUEST = {"message": "bad request"}
 
     UNAUTHORIZED = {"message": "unauthorized"}
+    ALREADY_CONNECTED = {"message": "already connected"}
