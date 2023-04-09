@@ -14,12 +14,10 @@ class Message(Dictable):
         elif type(obj) in [set, list]:
             return [Message.convert(v) for v in obj]
         else:
-            raise NotImplementedError(f"Cannot covert field of class {type(field)}")
+            raise NotImplementedError(f"Cannot covert field of class {type(obj)}")
 
     def as_dict(self):
         dict_ = {}
-        simple_types = [int, bool, str, float, list, dict]
-
         for field in fields(self):
             value = getattr(self, field.name)
             dict_[field.name] = self.convert(value)

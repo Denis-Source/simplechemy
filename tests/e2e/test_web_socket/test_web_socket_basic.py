@@ -1,7 +1,6 @@
 import json
 
 import pytest
-import requests
 import websockets
 from websockets.exceptions import ConnectionClosedError
 
@@ -9,7 +8,6 @@ import config
 from app.app import Routes
 from app.handlers.auth.jwt_utils import encode_jwt
 from app.handlers.responses import Responses
-from app.handlers.statements import Statements
 from tests import conftest
 from tests.e2e.base_api_test import BaseAPITest
 
@@ -31,7 +29,7 @@ class TestWebSocket(BaseAPITest):
         async with websockets.connect(f"{config.get_api_url(False)}{Routes.ws}",
                                       ) as websocket:
             with pytest.raises(ConnectionClosedError):
-                message = await websocket.recv()
+                await websocket.recv()
 
     @pytest.mark.asyncio
     @pytest.mark.timeout(conftest.TIMEOUT)
@@ -42,4 +40,4 @@ class TestWebSocket(BaseAPITest):
                                       extra_headers={"Authorization": f"bearer {invalid_token}"}
                                       ) as websocket:
             with pytest.raises(ConnectionClosedError):
-                message = await websocket.recv()
+                await websocket.recv()

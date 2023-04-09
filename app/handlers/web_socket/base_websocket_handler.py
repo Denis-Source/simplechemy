@@ -46,7 +46,6 @@ class BaseWebSocketHandler(WebSocketHandler, BaseHandler):
                 connection.write(event.as_dict())
 
     def on_message(self, message: str) -> None:
-        methods = self.get_methods()
         try:
             self.logger.debug(f"handling websocket message for {self.current_user}")
             message = json.loads(message)

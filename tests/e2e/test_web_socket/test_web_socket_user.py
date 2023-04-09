@@ -70,5 +70,3 @@ class TestWebSocketUser(BaseAPITest):
              "password": new_password}
         )
         assert response.status_code == 200
-
-

@@ -26,4 +26,3 @@ class UserWebSocketHandler(BaseWebSocketHandler):
         )
         event = self.application.message_bus.handle(cmd)
         self.write_message({"statement": Statements.CHANGED_USER} | event.as_dict())
-

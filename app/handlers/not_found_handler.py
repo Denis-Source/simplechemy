@@ -8,4 +8,3 @@ class NotFoundHandler(BaseHandler):
         raise HTTPError(
             404
         )
-

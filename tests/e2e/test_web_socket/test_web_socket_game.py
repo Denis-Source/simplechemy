@@ -78,7 +78,6 @@ class TestWebSocketGame(BaseAPITest):
         message = json.loads(await opened_connection.recv())
         assert message["statement"] == Statements.NOT_EXIST
 
-
     @pytest.mark.asyncio
     @pytest.mark.timeout(conftest.TIMEOUT)
     @pytest.mark.usefixtures("app")

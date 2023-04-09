@@ -41,5 +41,5 @@ class BaseAPITest:
     async def opened_connection(self, access_header):
         async with websockets.connect(f"{config.get_api_url(False)}{Routes.ws}",
                                       extra_headers=access_header) as websocket:
-            message = await websocket.recv()
+            await websocket.recv()
             yield websocket
