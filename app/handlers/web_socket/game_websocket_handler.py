@@ -25,10 +25,7 @@ class GameWebSocketHandler(BaseWebSocketHandler):
             model_cls_name=Game.NAME
         )
         event = self.application.message_bus.handle(cmd)
-        if isinstance(event, ModelGotEvent):
-            self.write_message(event.as_dict())
-        else:
-            self.write_message(event.as_dict())
+        self.write_message(event.as_dict())
 
     def list_game(self, payload: dict):
         cmd = ModelListCommand(
@@ -43,7 +40,4 @@ class GameWebSocketHandler(BaseWebSocketHandler):
             model_cls_name=Game.NAME
         )
         event = self.application.message_bus.handle(cmd)
-        if isinstance(event, ModelDeletedEvent):
-            self.write_message(event.as_dict())
-        else:
-            self.write_message(event.as_dict())
+        self.write_message(event.as_dict())

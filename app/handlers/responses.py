@@ -8,6 +8,6 @@ class Responses(dict, Enum):
     NOT_FOUND = {"message": "resource not found"}
 
     WS_OPENED = {"message": "ws opened"}
-    BAD_REQUEST = {"message": "bad statement"}
+    BAD_REQUEST = {"message": "bad request"}
 
     UNAUTHORIZED = {"message": "unauthorized"}
