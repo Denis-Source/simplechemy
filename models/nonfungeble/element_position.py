@@ -44,10 +44,15 @@ class ElementPosition(Entity):
 
     def as_dict(self) -> dict:
         dict_ = super().as_dict()
+
+        carried_by_d = None
+        if self.carried_by:
+            carried_by_d = self.carried_by.as_dict()
+
         dict_.update({
-            "carried_by": self.carried_by,
+            "carried_by": carried_by_d,
             "x": self.x,
             "y": self.y,
-            "element": self.element.name
+            "element": self.element.as_dict()
         })
         return dict_

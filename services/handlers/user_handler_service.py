@@ -8,7 +8,7 @@ from services.commands.user_commands import UserEnterGameCommand, UserLeaveGameC
 from services.events.model_events import InstanceNotExistEvent
 from services.events.user_events import UserEnteredGameEvent, UserAlreadyInGameEvent, UserLeftGameEvent, \
     UserNotInGameEvent, UserVerifiedPasswordEvent
-from services.handlers.model_handler_service import ModelHandlerService
+from services.handlers.model_handler_service import ModelHandlerService, WrongModelClassCommandException
 
 
 class UserHandlerService(ModelHandlerService):
@@ -70,7 +70,7 @@ class UserHandlerService(ModelHandlerService):
                 game=game
             )
 
-        except UserNotInGameException:
+        except (UserNotInGameException, WrongModelClassCommandException):
             return UserNotInGameEvent(
                 instance=instance
             )

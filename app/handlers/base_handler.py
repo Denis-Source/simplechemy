@@ -1,6 +1,6 @@
 import sys
 from logging import getLogger
-from typing import Optional, Union
+from typing import Optional, Union, Awaitable
 
 from tornado.web import RequestHandler
 
@@ -10,10 +10,11 @@ from models.nonfungeble.user import User
 
 class BaseHandler(RequestHandler):
     NAME = "base handler"
-    logger = getLogger(NAME)
 
     def set_current_user(self, user: Optional[User]):
         self.current_user = user
+
+    logger = getLogger(NAME)
 
     def write_error(self, status_code: int, **kwargs) -> None:
         _, error, _ = sys.exc_info()
@@ -35,3 +36,6 @@ class BaseHandler(RequestHandler):
         if isinstance(chunk, str):
             chunk = {"message": chunk}
         return super().write(chunk)
+
+    def data_received(self, chunk: bytes) -> Optional[Awaitable[None]]:
+        pass

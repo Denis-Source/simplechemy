@@ -99,5 +99,5 @@ class TestElementPositionModel(TestEntityModel):
             "carried_by": model_instance.carried_by,
             "x": model_instance.x,
             "y": model_instance.y,
-            "element": model_instance.element.name
+            "element": model_instance.element.as_dict()
         }

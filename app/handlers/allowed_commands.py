@@ -13,6 +13,11 @@ class AllowedCommands(str, Enum):
     ENTER_GAME = "enter_game"
     LEAVE_GAME = "leave_game"
 
+    ADD_ELEMENT_P = "add_element_p"
+    REMOVE_ELEMENT_P = "remove_element_p"
+    MOVE_ELEMENT_P = "move_element_p"
+    CLEAR_ELEMENTS_P = "clear_elements_p"
+
     # GOT = "got_user"
     #
     # CHANGE = "change_user"

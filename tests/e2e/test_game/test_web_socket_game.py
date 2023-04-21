@@ -82,12 +82,12 @@ class TestWebSocketGame(BaseAPITest):
              }}
         ))
 
-        response1 = json.loads(await opened_connection.recv())
-        response2 = json.loads(await another_opened_connection.recv())
+        response = json.loads(await opened_connection.recv())
+        another_response = json.loads(await another_opened_connection.recv())
 
-        assert response1 == response2
-        assert response1["message"] == ModelDeletedEvent.NAME
-        assert response1["instance"]["uuid"] == created_game["uuid"]
+        assert response == another_response
+        assert response["message"] == ModelDeletedEvent.NAME
+        assert response["instance"]["uuid"] == created_game["uuid"]
 
         await opened_connection.send(json.dumps({
             "message": AllowedCommands.GET_GAME,
@@ -95,9 +95,9 @@ class TestWebSocketGame(BaseAPITest):
                 "uuid": str(uuid4)
             }
         }))
-        response1 = json.loads(await opened_connection.recv())
+        response = json.loads(await opened_connection.recv())
 
-        assert response1["message"] == InstanceNotExistEvent.NAME
+        assert response["message"] == InstanceNotExistEvent.NAME
 
     @pytest.mark.asyncio
     @pytest.mark.timeout(conftest.TIMEOUT)

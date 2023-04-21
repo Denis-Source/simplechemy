@@ -230,6 +230,10 @@ class Element(BaseModel):
         return Element.list()
 
     @classmethod
+    def get_recipes(cls):
+        return cls._recipes
+
+    @classmethod
     def reset_all(cls):
         cls._instances = {}
         cls._recipes = {}

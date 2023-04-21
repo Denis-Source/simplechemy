@@ -108,3 +108,16 @@ class BaseAPITest:
 
         response = json.loads(await opened_connection.recv())
         return response["game"]
+
+    @pytest_asyncio.fixture()
+    async def entered_game_by_two(self, opened_connection, another_opened_connection, entered_game):
+        await another_opened_connection.send(json.dumps({
+            "message": AllowedCommands.ENTER_GAME,
+            "payload": {
+                "game_uuid": entered_game["uuid"]
+            }}
+        ))
+        await another_opened_connection.recv()
+        await another_opened_connection.recv()
+        response = json.loads(await opened_connection.recv())
+        return response["game"]

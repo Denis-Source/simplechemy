@@ -7,9 +7,9 @@ from models.nonfungeble.game import Game
 from models.nonfungeble.user import User
 from services.commands.model_commands import ModelCreateCommand
 from services.commands.game_commands import GameAddElementPCommand, GameRemoveElementPCommand, GameMoveElementPCommand
-from services.events.game_events import GameAddedElementPEvent, GameNotUnlockedElementEvent, GameElementNotExistEvent, \
+from services.events.game_events import GameAddedElementPEvent, GameElementNotExistEvent, \
     GameRemovedElementPEvent, GameElementPNotInGameEvent, GameMovedElementPEvent, GameElementPOutOfBoundsEvent, \
-    GameNewElementCraftedEvent
+    GameNewElementPCraftedEvent
 from services.handlers.game_handler_service import GameHandlerService
 from tests.integration.test_services.base_test_model_service import BaseTestModelServices
 
@@ -92,7 +92,7 @@ class TestGameServices(BaseTestModelServices):
             )
 
             event = self.message_bus.handle(cmd)
-            assert isinstance(event, GameNotUnlockedElementEvent)
+            assert isinstance(event, GameElementNotExistEvent)
 
     def test_add_element_p_not_exist(self, element_cls, saved_instance):
         non_existent_element_name = "00"
@@ -228,7 +228,7 @@ class TestGameServices(BaseTestModelServices):
             is_done=True
         )
         event = self.message_bus.handle(cmd)
-        assert isinstance(event, GameNewElementCraftedEvent)
+        assert isinstance(event, GameNewElementPCraftedEvent)
         assert event.element_p.element == element_cls.get_result([saved_added_element_p.element,
                                                                   another_saved_added_element_p.element])
         assert event.element_p.element in self.storage.get(Game, saved_instance.uuid).unlocked_elements

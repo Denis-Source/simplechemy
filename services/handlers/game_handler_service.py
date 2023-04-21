@@ -1,15 +1,16 @@
 import logging
 from typing import Union
 
+from models.base import InstanceNotExist
 from models.fungeble.element import Element, NotUnlockedElementException, ElementNotExistException
 from models.nonfungeble.element_position import ElementPosition, ElementPositionOutOfBounds
 from models.nonfungeble.game import Game, ElementPNotInGameException
 from models.nonfungeble.user import User
 from services.commands.game_commands import GameAddElementPCommand, GameRemoveElementPCommand, GameMoveElementPCommand, \
     GameClearElementsPCommand
-from services.events.game_events import GameAddedElementPEvent, GameNotUnlockedElementEvent, GameElementNotExistEvent, \
+from services.events.game_events import GameAddedElementPEvent, GameElementNotExistEvent, \
     GameRemovedElementPEvent, GameElementPNotInGameEvent, GameMovedElementPEvent, GameClearedElementsPEvent, \
-    GameElementPOutOfBoundsEvent, GameNewElementCraftedEvent
+    GameElementPOutOfBoundsEvent, GameNewElementPCraftedEvent
 from services.handlers.model_handler_service import ModelHandlerService
 
 
@@ -22,11 +23,14 @@ class GameHandlerService(ModelHandlerService):
         if isinstance(element_or_name, Element):
             return element_or_name
         elif isinstance(element_or_name, str):
-            return Element.get(element_or_name)
+            element = Element.get(element_or_name)
+            if not element:
+                raise InstanceNotExist(element_or_name, Element)
+            return element
 
     def add_element_p(self, cmd: GameAddElementPCommand) -> \
             Union[
-                GameAddedElementPEvent, GameNotUnlockedElementEvent, GameElementNotExistEvent]:
+                GameAddedElementPEvent, GameElementNotExistEvent]:
         instance: Game = self.get_instance(
             instance_or_uuid=cmd.instance,
             model_cls=Game
@@ -47,13 +51,7 @@ class GameHandlerService(ModelHandlerService):
                 element_p=element_p
             )
 
-        except NotUnlockedElementException:
-            return GameNotUnlockedElementEvent(
-                instance=instance,
-                element=element
-            )
-
-        except ElementNotExistException:
+        except (ElementNotExistException, NotUnlockedElementException):
             return GameElementNotExistEvent(
                 instance=instance,
                 name=cmd.element,
@@ -90,7 +88,7 @@ class GameHandlerService(ModelHandlerService):
 
     def move_element_p(self, cmd: GameMoveElementPCommand) -> \
             Union[
-                GameMovedElementPEvent, GameNewElementCraftedEvent,
+                GameMovedElementPEvent, GameNewElementPCraftedEvent,
                 GameElementPNotInGameEvent, GameElementPOutOfBoundsEvent]:
         instance: Game = self.get_instance(
             instance_or_uuid=cmd.instance,
@@ -127,7 +125,7 @@ class GameHandlerService(ModelHandlerService):
                 for u_ps in used_elements_p:
                     self.storage.delete(u_ps)
                 self.storage.put(instance)
-                return GameNewElementCraftedEvent(
+                return GameNewElementPCraftedEvent(
                     instance=instance,
                     element_p=result,
                     used_elements_p=used_elements_p

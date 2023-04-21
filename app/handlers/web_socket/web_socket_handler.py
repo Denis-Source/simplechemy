@@ -14,5 +14,10 @@ class WebSocketHandler(UserWebSocketHandler, GameWebSocketHandler):
             AllowedCommands.GET_USER: self.get_user,
             AllowedCommands.CHANGE_USER: self.change_user,
             AllowedCommands.ENTER_GAME: self.enter_game,
-            AllowedCommands.LEAVE_GAME: self.leave_game
+            AllowedCommands.LEAVE_GAME: self.leave_game,
+
+            AllowedCommands.ADD_ELEMENT_P: self.add_element_p,
+            AllowedCommands.REMOVE_ELEMENT_P: self.remove_element_p,
+            AllowedCommands.MOVE_ELEMENT_P: self.move_element_p,
+            AllowedCommands.CLEAR_ELEMENTS_P: self.clear_elements_p
         }

@@ -9,6 +9,8 @@ from app.handlers.auth.jwt_utils import jwt_authenticated_ws
 from app.handlers.base_handler import BaseHandler
 from app.handlers.responses import Responses
 from models.nonfungeble.user import User
+from services.commands.model_commands import ModelGetCommand
+from services.commands.user_commands import UserLeaveGameCommand
 
 
 class UserAlreadyConnectedException(Exception):
@@ -53,6 +55,12 @@ class BaseWebSocketHandler(WebSocketHandler, BaseHandler):
     def on_close(self) -> None:
         self.logger.info(f"closed {self.NAME} connection ({id(self)})")
         self._remove_connection(self.current_user)
+        if self.current_user.game_uuid:
+            cmd = UserLeaveGameCommand(
+                instance=self.current_user,
+                game=self.current_user.game_uuid
+            )
+            self.application.message_bus.handle(cmd)
 
     def broadcast(self, message: dict, user_list: List[User] = None) -> None:
         if user_list is None:

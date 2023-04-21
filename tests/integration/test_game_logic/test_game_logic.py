@@ -153,6 +153,11 @@ class TestGameLogic:
                 result = element_cls.get_result(recipe.schema)
                 assert result == element
 
+    def test_if_all_recipes_valid(self, element_cls):
+        for recipe, expected_result in element_cls.get_recipes().items():
+            result = element_cls.get_result(list(recipe))
+            assert result == expected_result
+
     def test_if_game_can_be_completed(self, element_cls, saved_instance, saved_user):
         for element in saved_instance.unlocked_elements:
             for recipy in element.involved_recipes:
