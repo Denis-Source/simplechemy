@@ -71,7 +71,8 @@ class Element(BaseModel):
     _recipes = {}
     _starting = []
 
-    def __init__(self, name: str, starting=False, recipe: List[Recipe] = None, recipes: List[Recipe] = None):
+    def __init__(self, name: str, image: str = None, starting=False, recipe: List[Recipe] = None,
+                 recipes: List[Recipe] = None):
         instance = self._instances.get(name)
         if instance:
             self.name = instance.name
@@ -81,6 +82,7 @@ class Element(BaseModel):
             return
 
         self.name = name
+        self.image = image
         self.starting = starting
         if recipe:
             self.recipes = recipe
@@ -107,7 +109,8 @@ class Element(BaseModel):
 
     def as_dict(self) -> dict:
         return {
-            "name": self.name
+            "name": self.name,
+            "image": self.image
         }
 
     @classmethod
@@ -125,6 +128,10 @@ class Element(BaseModel):
         if not instance:
             raise ElementNotExistException(name)
         return instance
+
+    def add_image(self, image_path: str):
+        self.logger.debug(f"adding {image_path} image to {self}")
+        self.image = image_path
 
     def add_recipe(self, recipe: Recipe):
         self.logger.debug(f"adding {recipe.NAME} ({recipe}) for {self.NAME} {self}")

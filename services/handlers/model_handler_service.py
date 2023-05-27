@@ -37,6 +37,7 @@ class ModelHandlerService(BaseHandlerService):
                 model_cls=model_cls,
                 uuid=instance_or_uuid
             )
+
             if not instance:
                 raise InstanceNotExist(instance_or_uuid, model_cls)
             return instance

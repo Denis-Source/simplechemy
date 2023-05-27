@@ -2,7 +2,7 @@ import asyncio
 from enum import Enum
 from logging import getLogger
 
-from tornado.web import Application
+from tornado.web import Application, StaticFileHandler
 
 import config
 from app.handlers.auth.login_handler import LoginHandler
@@ -11,7 +11,7 @@ from app.handlers.auth.register_handler import RegisterHandler
 from app.handlers.not_found_handler import NotFoundHandler
 from app.handlers.ping_handler import PingHandler
 from app.handlers.web_socket.web_socket_handler import WebSocketHandler
-from services.commands.init_commands import LoadElementsInitCommand
+from services.commands.init_commands import LoadElementsInitCommand, LoadElementImagesInitCommand
 from services.message_bus import MessageBus
 
 
@@ -43,7 +43,8 @@ class App(Application):
             (Routes.login, LoginHandler),
             (Routes.refresh, RefreshHandler),
 
-            (Routes.ws, WebSocketHandler)
+            (Routes.ws, WebSocketHandler),
+            (f"/{config.get_media_sub_url()}/(.*)", StaticFileHandler, {"path": config.get_media_path()})
         ]
 
         super().__init__(
@@ -61,10 +62,13 @@ class App(Application):
         self.message_bus.handle(
             LoadElementsInitCommand()
         )
+        self.message_bus.handle(
+            LoadElementImagesInitCommand()
+        )
 
     async def _main(self):
         self.initialize()
-        self.logger.info(f"running on {config.get_api_url()}:{config.get_api_port()}")
+        self.logger.info(f"running on {config.get_api_url()}")
         self.listen(config.get_api_port())
 
         shutdown_event = asyncio.Event()

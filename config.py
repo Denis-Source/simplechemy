@@ -36,6 +36,18 @@ def get_storage() -> BaseStorage:
     return MemoryStorage()
 
 
+def get_media_path() -> str:
+    return os.getenv("MEDIA_PATH", "media")
+
+
+def get_media_sub_url():
+    return os.getenv('MEDIA_URL', 'media')
+
+
+def get_media_url() -> str:
+    return f"{get_api_url()}/{get_media_sub_url()}"
+
+
 def get_element_content_path():
     return os.getenv("ELEMENT_CONTENT_PATH", "recipes.txt")
 

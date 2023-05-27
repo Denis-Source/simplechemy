@@ -1,6 +1,8 @@
 import logging
 from typing import List
 
+from PIL import Image, ImageFont, ImageDraw
+
 import config
 from models.fungeble.element import Element, ElementNotExistException, ElementAlreadyHasRecipeException, \
     ElementAlreadyHasInvolvedRecipeException, IncompleteElementContent
@@ -81,6 +83,18 @@ def load_from_txt(filepath: str = config.get_element_content_path(), element_cls
     return Element.list()
 
 
-for i in Element.list():
-    print(i.name)
-print(len(load_from_txt()))
+def create_element_image(element: Element, image_path: str, size=512, padding=10):
+    image = Image.new(mode="RGBA", size=(size, size), color=(0, 0, 0, 0))
+
+    font_size = round((size - padding * 2) / len(element.name) * 1.5)
+    font = ImageFont.truetype("arial.ttf", font_size)
+
+    draw = ImageDraw.Draw(image)
+    text_width, text_height = draw.textsize(element.name, font=font)
+
+    draw.text(((size - text_width) / 2, (size - text_height) / 2), element.name, font=font)
+    image.save(image_path)
+
+
+def convert_image_path(path: str) -> str:
+    return path.replace(config.get_media_path(), config.get_media_url()).replace("\\", "/")

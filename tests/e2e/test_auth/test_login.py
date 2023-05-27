@@ -24,6 +24,7 @@ class TestLogin(BaseAPITest):
 
         assert decoded.get("sub") == response.json().get("instance").get("uuid")
 
+    @pytest.mark.usefixtures("app")
     def test_login_invalid_user_uuid(self, mock_password):
         response = requests.post(
             f"{config.get_api_url()}{Routes.login}",
@@ -33,6 +34,7 @@ class TestLogin(BaseAPITest):
 
         assert response.status_code == 404
 
+    @pytest.mark.usefixtures("app")
     def test_login_missing_password(self, registered_user):
         user_uuid = registered_user["uuid"]
 
@@ -43,6 +45,7 @@ class TestLogin(BaseAPITest):
 
         assert response.status_code == 400
 
+    @pytest.mark.usefixtures("app")
     def test_login_missing_user_uuid(self, mock_password):
         response = requests.post(
             f"{config.get_api_url()}{Routes.login}",
@@ -51,6 +54,7 @@ class TestLogin(BaseAPITest):
 
         assert response.status_code == 400
 
+    @pytest.mark.usefixtures("app")
     def test_login_invalid_password(self, registered_user):
         user_uuid = registered_user["uuid"]
 

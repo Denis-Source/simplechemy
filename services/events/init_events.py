@@ -4,10 +4,20 @@ from services.events.base_event import BaseEvent
 
 
 @dataclass
-class LoadedElementsInitEvent(BaseEvent):
+class InitEvent(BaseEvent):
+    pass
+
+
+@dataclass
+class LoadedElementsInitEvent(InitEvent):
     NAME = "loaded_elements_init_event"
 
 
 @dataclass
-class LoadedElementInitErroredEvent(BaseEvent):
+class LoadedElementInitErroredEvent(InitEvent):
     NAME = "loaded_elements_errored_init_event"
+
+
+@dataclass
+class LoadedElementImagesInitEvent(InitEvent):
+    NAME = "loaded_elements_images_event"
