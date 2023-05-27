@@ -34,7 +34,7 @@ def app():
     except (ConnectTimeout, ConnectionError):
         process = Process(target=run_app)
         process.start()
-        time.sleep(20)
+        time.sleep(60)
         yield
 
         os.kill(process.pid, signal.SIGINT)
