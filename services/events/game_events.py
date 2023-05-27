@@ -1,7 +1,6 @@
 from dataclasses import dataclass
 from typing import Tuple, List
 
-from models.fungeble.element import Element
 from models.nonfungeble.element_position import ElementPosition
 from models.nonfungeble.game import Game
 from services.events.model_events import ModelEvent
@@ -11,12 +10,12 @@ from services.events.model_events import ModelEvent
 class GameEvent(ModelEvent):
     pass
 
-
 @dataclass
 class GameAddedElementPEvent(GameEvent):
     NAME = "game_added_element_p_event"
     instance: Game
     element_p: ElementPosition
+
 
 @dataclass
 class GameElementNotExistEvent(GameEvent):

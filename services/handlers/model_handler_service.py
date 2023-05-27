@@ -8,6 +8,7 @@ from services.commands.model_commands import ModelCreateCommand, ModelGetCommand
     ModelChangeCommand
 from services.events.model_events import ModelCreatedEvent, ModelGotEvent, ModelListedEvent, ModelDeletedEvent, \
     InstanceNotExistEvent, ModelChangedEvent
+from services.handlers.base_handler_service import BaseHandlerService
 
 
 class WrongModelClassCommandException(Exception):
@@ -18,7 +19,7 @@ class WrongModelClassCommandException(Exception):
         return f"Command can not have {self.model_cls_model} class"
 
 
-class ModelHandlerService:
+class ModelHandlerService(BaseHandlerService):
     NAME = "model handler"
     logger = logging.getLogger()
 

@@ -11,6 +11,7 @@ from app.handlers.auth.register_handler import RegisterHandler
 from app.handlers.not_found_handler import NotFoundHandler
 from app.handlers.ping_handler import PingHandler
 from app.handlers.web_socket.web_socket_handler import WebSocketHandler
+from services.commands.init_commands import LoadElementsInitCommand
 from services.message_bus import MessageBus
 
 
@@ -55,7 +56,14 @@ class App(Application):
         self.storage = config.get_storage()
         self.message_bus = MessageBus(self.storage)
 
+    def initialize(self):
+        self.logger.info("initializing")
+        self.message_bus.handle(
+            LoadElementsInitCommand()
+        )
+
     async def _main(self):
+        self.initialize()
         self.logger.info(f"running on {config.get_api_url()}:{config.get_api_port()}")
         self.listen(config.get_api_port())
 

@@ -4,6 +4,7 @@ from models.nonfungeble.game import Game
 from models.nonfungeble.user import User
 
 import config
+from services.utils import load_from_txt
 from storage.memory import MemoryStorage
 from tests.integration.test_model_in_storage.test_entity_in_storage import TestEntityInMemoryStorage
 
@@ -15,7 +16,7 @@ class TestGameInMemoryStorage(TestEntityInMemoryStorage):
     @pytest.fixture(scope="module")
     def element_cls(self):
         filepath = config.get_element_content_path()
-        Element.load_from_txt(filepath)
+        load_from_txt(filepath)
 
         yield Element
         Element.reset_all()
@@ -30,7 +31,7 @@ class TestGameInMemoryStorage(TestEntityInMemoryStorage):
     @pytest.fixture
     def saved_instance(self, element_cls, saved_user):
         filepath = config.get_element_content_path()
-        element_cls.load_from_txt(filepath)
+        load_from_txt(filepath)
         instance = self.model_cls(
             creator_user=saved_user,
         )
@@ -41,7 +42,7 @@ class TestGameInMemoryStorage(TestEntityInMemoryStorage):
     @pytest.fixture
     def not_saved_instance(self, element_cls, saved_user):
         filepath = config.get_element_content_path()
-        element_cls.load_from_txt(filepath)
+        load_from_txt(filepath)
         instance = self.model_cls(
             creator_user=saved_user,
         )

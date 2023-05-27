@@ -2,6 +2,7 @@ import config
 from models.fungeble.element import Element
 from services.events.model_events import ModelEvent
 from services.handlers.game_handler_service import GameHandlerService
+from services.handlers.init_hanlder_service import InitHandlerService
 from services.handlers.user_handler_service import UserHandlerService
 
 
@@ -17,9 +18,9 @@ class MessageBus:
     def __init__(self, storage=config.get_storage()):
         self.storage = storage
         self._handlers = \
+            InitHandlerService.get_handlers() | \
             UserHandlerService.get_handlers(self.storage) | \
             GameHandlerService.get_handlers(self.storage)
-        Element.load_from_txt(config.get_element_content_path())
 
     def handle(self, cmd) -> ModelEvent:
         handler = self._handlers.get(cmd.__class__)

@@ -3,13 +3,14 @@ import pytest
 from models.fungeble.element import Element
 from models.nonfungeble.game import Game
 from models.nonfungeble.user import User
+from services.handlers.base_handler_service import BaseHandlerService
 from services.handlers.game_handler_service import GameHandlerService
 from services.handlers.user_handler_service import UserHandlerService
 from services.message_bus import MessageBus
 from storage.memory import MemoryStorage
 
 
-class BaseTestHandler:
+class BaseTestHandler(BaseHandlerService):
     model_cls = None
     handler_cls = None
     storage = MemoryStorage()
@@ -31,6 +32,9 @@ class BaseTestHandler:
             get_instance(saved_instance, self.model_cls)
 
         assert instance_by_self == instance_by_uuid
+
+    def get_handlers(cls, **kwargs) -> dict:
+        {}
 
 
 class TestUserHandler(BaseTestHandler):

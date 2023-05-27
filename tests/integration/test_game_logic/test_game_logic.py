@@ -4,6 +4,7 @@ import config
 from models.fungeble.element import Element, NotUnlockedElementException
 from models.nonfungeble.game import Game, ElementPNotInGameException
 from models.nonfungeble.user import User
+from services.utils import load_from_txt
 
 
 class TestGameLogic:
@@ -16,7 +17,7 @@ class TestGameLogic:
     @pytest.fixture(scope="module")
     def element_cls(self):
         filepath = config.get_element_content_path()
-        Element.load_from_txt(filepath)
+        load_from_txt(filepath)
 
         yield Element
         Element.reset_all()
@@ -146,7 +147,7 @@ class TestGameLogic:
 
     def test_if_all_elements_craftable(self, element_cls):
         filepath = config.get_element_content_path()
-        element_cls.load_from_txt(filepath)
+        load_from_txt(filepath)
 
         for element in element_cls.list():
             for recipe in element.recipes:

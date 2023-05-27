@@ -4,7 +4,7 @@ import pytest
 
 import config
 from models.fungeble.element import Element, IncompleteElementContent, IncorrectElementRecipe
-
+from services.utils import load_from_txt
 
 class TestElementsAndRecipes:
     @pytest.fixture
@@ -68,7 +68,7 @@ class TestElementsAndRecipes:
     def test_element_loaded_from_txt(self, element_cls, mock_txt_file_with_recipes):
         filepath, correct_amount = mock_txt_file_with_recipes
 
-        elements = element_cls.load_from_txt(filepath)
+        elements = load_from_txt(filepath)
         assert len(elements) == correct_amount
         assert element_cls.get_element_count() == correct_amount
 
@@ -85,7 +85,7 @@ class TestElementsAndRecipes:
                     "\n".join(shuffled_recipe)
                 )
 
-            elements = element_cls.load_from_txt(filepath)
+            elements = load_from_txt(filepath)
             assert len(elements) == correct_amount
             assert element_cls.get_element_count() == correct_amount
 
@@ -97,37 +97,37 @@ class TestElementsAndRecipes:
 
     def test_incomplete_element_content(self, element_cls, incomplete_mock_txt_file_with_recipes):
         with pytest.raises(IncompleteElementContent):
-            element_cls.load_from_txt(incomplete_mock_txt_file_with_recipes)
+            load_from_txt(incomplete_mock_txt_file_with_recipes)
 
     def test_elements_can_have_two_or_more_recipes(self, element_cls,
                                                    mock_txt_file_with_recipes_with_more_than_one_option):
         filepath, correct_amount = mock_txt_file_with_recipes_with_more_than_one_option
 
-        elements = element_cls.load_from_txt(filepath)
+        elements = load_from_txt(filepath)
         assert len(elements) == correct_amount
         assert element_cls.get_element_count() == correct_amount
 
     def test_if_element_content_path_correct(self, element_cls):
         filepath = config.get_element_content_path()
-        element_cls.load_from_txt(filepath)
+        load_from_txt(filepath)
         assert element_cls.list()
 
     def test_correct_recipe(self, element_cls, mock_txt_file_with_recipes):
-        element_cls.load_from_txt(mock_txt_file_with_recipes[0])
+        load_from_txt(mock_txt_file_with_recipes[0])
         recipe_elements = [element_cls.get("Fire"), element_cls.get("Stone")]
         correct_element = element_cls.get("Metal")
 
         assert element_cls.get_result(recipe_elements) == correct_element
 
     def test_incorrect_recipe(self, element_cls, mock_txt_file_with_recipes):
-        element_cls.load_from_txt(mock_txt_file_with_recipes[0])
+        load_from_txt(mock_txt_file_with_recipes[0])
         recipe_elements = [element_cls.get("Fire"), element_cls.get("Bird")]
 
         with pytest.raises(IncorrectElementRecipe):
             element_cls.get_result(recipe_elements)
 
     def test_correct_recipe_incorrect_result(self, element_cls, mock_txt_file_with_recipes):
-        element_cls.load_from_txt(mock_txt_file_with_recipes[0])
+        load_from_txt(mock_txt_file_with_recipes[0])
         recipe_elements = [element_cls.get("Fire"), element_cls.get("Stone")]
         correct_element = element_cls.get("Bird")
 

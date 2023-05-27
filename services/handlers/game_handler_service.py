@@ -12,6 +12,7 @@ from services.events.game_events import GameAddedElementPEvent, GameElementNotEx
     GameRemovedElementPEvent, GameElementPNotInGameEvent, GameMovedElementPEvent, GameClearedElementsPEvent, \
     GameElementPOutOfBoundsEvent, GameNewElementPCraftedEvent
 from services.handlers.model_handler_service import ModelHandlerService
+from services.utils import load_from_txt
 
 
 class GameHandlerService(ModelHandlerService):

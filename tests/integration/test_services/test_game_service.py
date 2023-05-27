@@ -11,6 +11,7 @@ from services.events.game_events import GameAddedElementPEvent, GameElementNotEx
     GameRemovedElementPEvent, GameElementPNotInGameEvent, GameMovedElementPEvent, GameElementPOutOfBoundsEvent, \
     GameNewElementPCraftedEvent
 from services.handlers.game_handler_service import GameHandlerService
+from services.utils import load_from_txt
 from tests.integration.test_services.base_test_model_service import BaseTestModelServices
 
 
@@ -28,7 +29,7 @@ class TestGameServices(BaseTestModelServices):
     @pytest.fixture(scope="module")
     def element_cls(self):
         filepath = config.get_element_content_path()
-        Element.load_from_txt(filepath)
+        load_from_txt(filepath)
 
         yield Element
         Element.reset_all()

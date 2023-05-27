@@ -9,7 +9,6 @@ from app.handlers.auth.jwt_utils import jwt_authenticated_ws
 from app.handlers.base_handler import BaseHandler
 from app.handlers.responses import Responses
 from models.nonfungeble.user import User
-from services.commands.model_commands import ModelGetCommand
 from services.commands.user_commands import UserLeaveGameCommand
 
 

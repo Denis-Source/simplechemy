@@ -4,9 +4,9 @@ from models.fungeble.element import Element
 
 
 class TestElementModel:
-    def test_equal_elements(self):
-        element_one = Element("Air")
-        element_two = Element("Air")
+    def test_equal_elements(self, element_cls):
+        element_one = element_cls("Air")
+        element_two = element_cls("Air")
 
         assert element_one == element_two
 

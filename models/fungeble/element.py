@@ -154,80 +154,18 @@ class Element(BaseModel):
         return result
 
     @classmethod
+    def add_element(cls, element: Element, starting=False):
+        if starting:
+            cls._starting.append(element)
+        cls._instances[element.name] = element
+
+    @classmethod
     def list(cls, starting=False):
         cls.logger.debug(f"listing {cls.NAME} instances")
 
         if starting:
             return cls._starting
         return list(cls._instances.values())
-
-    @classmethod
-    def load_from_txt(cls, filepath: str):
-        # TODO REFACTOR
-        cls.reset_all()
-        cls.logger.info(f"loading {cls.NAME} from {filepath} file")
-
-        with open(filepath, "r") as f:
-            lines = f.readlines()
-
-        total_elements = len(set([line.split("=")[0].strip() for line in lines]))
-
-        # starting elements
-        cls.logger.debug("loading starting elements")
-        for line in lines:
-            if line.count("=") == 0:
-                element = Element(
-                    name=line.strip(),
-                    starting=True,
-                    recipes=[],
-                    recipe=None
-                )
-                if element not in cls._starting:
-                    cls._starting.append(element)
-
-        cls.logger.debug(f"loaded ({Element.get_element_count()}) starting elements")
-        cls.logger.debug("loading secondary elements")
-
-        not_found_recipes = set()
-        found_flag = True
-        # secondary elements
-        while Element.get_element_count() != total_elements:
-            previous_count = cls.get_element_count()
-            for line in lines:
-                if line.count("=") == 0:
-                    continue
-
-                result_name = line.split("=")[0].strip()
-                if found_flag:
-                    not_found_recipes.add(result_name)
-
-                recipe_names = [recipe_name.strip() for recipe_name in line.split("=")[1].strip().split("+")]
-                try:
-                    all_there = all([Element.get(element_name) for element_name in recipe_names])
-                except ElementNotExistException:
-                    all_there = False
-
-                if all_there:
-                    new_element = Element(result_name, recipe=None)
-                    recipe = Recipe(result=new_element,
-                                    schema=[Element.get(element_name) for element_name in recipe_names])
-                    if result_name in not_found_recipes:
-                        not_found_recipes.remove(result_name)
-                    try:
-                        new_element.add_recipe(recipe)
-                    except ElementAlreadyHasRecipeException:
-                        pass
-                    for involved_element in recipe.schema:
-                        try:
-                            involved_element.add_involved_recipe(recipe)
-                        except ElementAlreadyHasInvolvedRecipeException:
-                            pass
-            if previous_count == cls.get_element_count():
-                raise IncompleteElementContent(filepath, not_found_recipes)
-            found_flag = False
-
-        cls.logger.debug(f"loaded total: ({Element.get_element_count()}) elements")
-        return Element.list()
 
     @classmethod
     def get_recipes(cls):

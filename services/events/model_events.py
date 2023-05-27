@@ -2,11 +2,12 @@ from dataclasses import dataclass
 from typing import List
 
 from models.base import BaseModel
+from services.events.base_event import BaseEvent
 from services.message import Message
 
 
 @dataclass
-class ModelEvent(Message):
+class ModelEvent(BaseEvent):
     NAME = "model event"
 
 
