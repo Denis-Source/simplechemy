@@ -13,7 +13,7 @@ class InitHandlerService(BaseHandlerService):
     logger = logging.getLogger(NAME)
 
     def load_elements(self, cmd: LoadElementsInitCommand) -> Union[
-        LoadedElementsInitEvent, LoadedElementInitErroredEvent]:
+            LoadedElementsInitEvent, LoadedElementInitErroredEvent]:
         if cmd.filename:
             filepath = cmd.filename
         else:

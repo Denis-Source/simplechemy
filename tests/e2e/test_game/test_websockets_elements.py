@@ -134,7 +134,6 @@ class TestWebSocketGame(BaseAPITest):
         # TODO hardcoded elements names
         element_name = "Air"
         another_element_name = "Water"
-        expected_element_name = "Cloud"
 
         await opened_connection.send(json.dumps({
             "message": AllowedCommands.ADD_ELEMENT_P,
@@ -188,6 +187,7 @@ class TestWebSocketGame(BaseAPITest):
         # responses for the second movement (new element crafted)
         response = json.loads(await opened_connection.recv())
         assert response["message"] == GameNewElementPCraftedEvent.NAME
+
         assert len(response["used_elements_p"]) == 2
 
         another_response = json.loads(await another_opened_connection.recv())
