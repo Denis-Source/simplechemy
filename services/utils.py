@@ -86,8 +86,9 @@ def load_from_txt(filepath: str = config.get_element_content_path(), element_cls
 def create_element_image(element: Element, image_path: str, size=512, padding=10):
     image = Image.new(mode="RGBA", size=(size, size), color=(0, 0, 0, 0))
 
-    font_size = round((size - padding * 2) / len(element.name) * 1.5)
-    font = ImageFont.truetype("arial.ttf", font_size)
+    font_size = round((size - padding * 2) / len(element.name) * 2)
+
+    font = ImageFont.truetype(config.get_font_path(), font_size)
 
     draw = ImageDraw.Draw(image)
     text_width, text_height = draw.textsize(element.name, font=font)

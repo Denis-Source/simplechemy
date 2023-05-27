@@ -12,6 +12,10 @@ JWT_ALGORITHM = "HS256"
 TOKEN_LIFETIME = timedelta(days=60)
 
 
+def get_base_dir():
+    return os.path.dirname(__file__)
+
+
 def get_logging_file():
     return os.getenv("LOGGING_FILE", None)
 
@@ -32,12 +36,16 @@ def get_api_url(http=True):
         return f"ws://{host}:{get_api_port()}"
 
 
+def get_font_path() -> str:
+    return os.getenv("FONT_PATH", f"{get_base_dir()}/fonts/default.ttf")
+
+
 def get_storage() -> BaseStorage:
     return MemoryStorage()
 
 
 def get_media_path() -> str:
-    return os.getenv("MEDIA_PATH", "media")
+    return os.getenv("MEDIA_PATH", f"{get_base_dir()}/media")
 
 
 def get_media_sub_url():
@@ -49,7 +57,7 @@ def get_media_url() -> str:
 
 
 def get_element_content_path():
-    return os.getenv("ELEMENT_CONTENT_PATH", "recipes.txt")
+    return os.getenv("ELEMENT_CONTENT_PATH", f"{get_base_dir()}/recipes.txt")
 
 
 def get_secret():

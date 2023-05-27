@@ -34,9 +34,11 @@ class TestInitServices:
 
     def test_loaded_images_success(self):
         load_from_txt()
-
-        cmd = LoadElementImagesInitCommand(convert_to_app_path=False)
-        event = self.message_bus.handle(cmd)
+        event = self.message_bus.handle(
+            LoadElementImagesInitCommand(
+                convert_to_app_path=False
+            )
+        )
         assert type(event) == LoadedElementImagesInitEvent
 
         elements = Element.list()
