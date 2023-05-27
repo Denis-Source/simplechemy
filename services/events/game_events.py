@@ -10,6 +10,7 @@ from services.events.model_events import ModelEvent
 class GameEvent(ModelEvent):
     pass
 
+
 @dataclass
 class GameAddedElementPEvent(GameEvent):
     NAME = "game_added_element_p_event"

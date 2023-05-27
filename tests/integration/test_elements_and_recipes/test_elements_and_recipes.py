@@ -6,6 +6,7 @@ import config
 from models.fungeble.element import Element, IncompleteElementContent, IncorrectElementRecipe
 from services.utils import load_from_txt
 
+
 class TestElementsAndRecipes:
     @pytest.fixture
     def element_cls(self):

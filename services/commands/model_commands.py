@@ -3,7 +3,6 @@ from typing import Union
 
 from models.base import BaseModel
 from services.commands.base_command import BaseCommand
-from services.message import Message
 
 
 @dataclass

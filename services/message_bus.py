@@ -1,5 +1,4 @@
 import config
-from models.fungeble.element import Element
 from services.events.model_events import ModelEvent
 from services.handlers.game_handler_service import GameHandlerService
 from services.handlers.init_hanlder_service import InitHandlerService

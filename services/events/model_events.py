@@ -3,7 +3,6 @@ from typing import List
 
 from models.base import BaseModel
 from services.events.base_event import BaseEvent
-from services.message import Message
 
 
 @dataclass
