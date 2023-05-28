@@ -43,7 +43,7 @@ class Game(Entity):
             "creator_uuid": self.creator_uuid,
             "users": [user.as_dict() for user in self.users],
             "element_positions": [element_p.as_dict() for element_p in self.element_positions],
-            "unlocked_elements": [element.name for element in self.unlocked_elements]
+            "unlocked_elements": [element.as_dict() for element in self.unlocked_elements]
         })
         return dict_
 

@@ -10,6 +10,7 @@ from storage.memory import MemoryStorage
 LOGGING_FORMAT = "%(asctime)s\t%(levelname)-7s\t%(name)-20s\t%(message)s"
 JWT_ALGORITHM = "HS256"
 TOKEN_LIFETIME = timedelta(days=60)
+IMAGE_FORMAT = "png"
 
 
 def get_base_dir():

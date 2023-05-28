@@ -13,7 +13,7 @@ import config
 from app.app import App, Routes
 from storage.memory import MemoryStorage
 
-TIMEOUT = 5
+TIMEOUT = 25
 
 
 def run_app():

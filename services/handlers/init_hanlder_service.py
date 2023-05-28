@@ -15,7 +15,6 @@ from services.utils import load_from_txt, create_element_image, convert_image_pa
 class InitHandlerService(BaseHandlerService):
     NAME = "init handler"
     logger = logging.getLogger(NAME)
-    IMAGE_FORMAT = "png"
 
     def load_elements(self, cmd: LoadElementsInitCommand) -> \
             Union[LoadedElementsInitEvent, LoadedElementInitErroredEvent]:
@@ -40,7 +39,7 @@ class InitHandlerService(BaseHandlerService):
             os.makedirs(folder)
 
         for element in Element.list():
-            image_path = path.join(folder, f"{element.name}.{self.IMAGE_FORMAT}")
+            image_path = path.join(folder, f"{element.name}.{config.IMAGE_FORMAT}")
             if not path.exists(image_path):
                 create_element_image(element, image_path)
 
