@@ -14,7 +14,7 @@ from tests.e2e.base_api_test import BaseAPITest
 class TestWebSocketGame(BaseAPITest):
     @pytest_asyncio.fixture()
     async def added_element_p(self, opened_connection, entered_game_by_two, another_opened_connection):
-        element_name = entered_game_by_two["unlocked_elements"][0]
+        element_name = entered_game_by_two["unlocked_elements"][0]["name"]
 
         await opened_connection.send(json.dumps({
             "message": AllowedCommands.ADD_ELEMENT_P,
@@ -32,7 +32,7 @@ class TestWebSocketGame(BaseAPITest):
     @pytest.mark.timeout(conftest.TIMEOUT)
     @pytest.mark.usefixtures("app")
     async def test_element_p_added_success(self, opened_connection, entered_game_by_two, another_opened_connection):
-        element_name = entered_game_by_two["unlocked_elements"][0]
+        element_name = entered_game_by_two["unlocked_elements"][0]["name"]
 
         await opened_connection.send(json.dumps({
             "message": AllowedCommands.ADD_ELEMENT_P,

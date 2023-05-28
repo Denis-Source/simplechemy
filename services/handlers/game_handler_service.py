@@ -38,6 +38,9 @@ class GameHandlerService(ModelHandlerService):
 
         try:
             element: Element = self.get_element(cmd.element)
+            if not element:
+                raise TypeError
+
             element_p: ElementPosition = instance.add_element_p(
                 element=element,
                 x=cmd.x,
@@ -51,7 +54,7 @@ class GameHandlerService(ModelHandlerService):
                 element_p=element_p
             )
 
-        except (ElementNotExistException, NotUnlockedElementException):
+        except (ElementNotExistException, NotUnlockedElementException, TypeError):
             return GameElementNotExistEvent(
                 instance=instance,
                 name=cmd.element,
