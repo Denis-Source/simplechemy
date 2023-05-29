@@ -8,7 +8,6 @@ from websockets.exceptions import ConnectionClosedError
 import config
 from app.app import Routes
 from app.handlers.allowed_commands import AllowedCommands
-from app.handlers.responses import Responses
 from services.events.model_events import ModelChangedEvent, ModelGotEvent, InstanceNotExistEvent
 from services.events.user_events import UserEnteredGameEvent, UserAlreadyInGameEvent
 from tests import conftest
