@@ -3,6 +3,7 @@ from uuid import uuid4
 
 import pytest
 import requests
+from websockets.exceptions import ConnectionClosedError
 
 import config
 from app.app import Routes
@@ -49,8 +50,8 @@ class TestWebSocketUser(BaseAPITest):
         await opened_connection.send(json.dumps({
             "message": AllowedCommands.CHANGE_USER
         }))
-        response = json.loads(await opened_connection.recv())
-        assert response == Responses.BAD_REQUEST
+        with pytest.raises(ConnectionClosedError):
+            await opened_connection.recv()
 
     @pytest.mark.asyncio
     @pytest.mark.timeout(conftest.TIMEOUT)

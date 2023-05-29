@@ -3,6 +3,7 @@ from enum import Enum
 
 class Responses(dict, Enum):
     PONG = {"message": "pong"}
+    AUTHENTICATED = {"message": "successfully authenticated"}
 
     GENERAL_ERROR = {"message": "unknown error"}
     NOT_FOUND = {"message": "resource not found"}
@@ -10,5 +11,5 @@ class Responses(dict, Enum):
     WS_OPENED = {"message": "ws opened"}
     BAD_REQUEST = {"message": "bad request"}
 
-    UNAUTHORIZED = {"message": "unauthorized"}
+    UNAUTHENTICATED = {"message": "unauthenticated"}
     ALREADY_CONNECTED = {"message": "already connected"}

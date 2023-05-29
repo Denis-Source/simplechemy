@@ -8,6 +8,7 @@ import websockets
 import config
 from app.app import Routes
 from app.handlers.allowed_commands import AllowedCommands
+from app.handlers.responses import Responses
 
 
 class BaseAPITest:
@@ -65,20 +66,40 @@ class BaseAPITest:
     def another_access_header(self, another_access_token):
         return {"Authorization": f"bearer {another_access_token}"}
 
+    @pytest.fixture(scope="session")
+    def ws_authentication_message(self, access_token):
+        return json.dumps({
+            "message": "authentication",
+            "payload": {
+                "token": access_token
+            }
+        })
+
+    @pytest.fixture(scope="session")
+    def another_ws_authentication_message(self, another_access_token):
+        return json.dumps({
+            "message": "authentication",
+            "payload": {
+                "token": another_access_token
+            }
+        })
+
     @pytest_asyncio.fixture
-    async def opened_connection(self, access_header):
-        async with websockets.connect(f"{config.get_api_url(False)}{Routes.ws}",
-                                      extra_headers=access_header) as websocket:
+    async def opened_connection(self, ws_authentication_message):
+        async with websockets.connect(config.get_api_url(False)) as websocket:
             await websocket.recv()
+            await websocket.send(ws_authentication_message)
+            assert json.loads(await websocket.recv()) == Responses.AUTHENTICATED
             yield websocket
 
             await websocket.close()
 
     @pytest_asyncio.fixture
-    async def another_opened_connection(self, another_access_header):
-        async with websockets.connect(f"{config.get_api_url(False)}{Routes.ws}",
-                                      extra_headers=another_access_header) as websocket:
+    async def another_opened_connection(self, another_ws_authentication_message):
+        async with websockets.connect(config.get_api_url(False)) as websocket:
             await websocket.recv()
+            await websocket.send(another_ws_authentication_message)
+            assert json.loads(await websocket.recv()) == Responses.AUTHENTICATED
             yield websocket
 
             await websocket.close()

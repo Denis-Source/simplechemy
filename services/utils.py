@@ -93,7 +93,7 @@ def create_element_image(element: Element, image_path: str, size=512, padding=10
     draw = ImageDraw.Draw(image)
     text_width, text_height = draw.textsize(element.name, font=font)
 
-    draw.text(((size - text_width) / 2, (size - text_height) / 2), element.name, font=font)
+    draw.text(((size - text_width) / 2, (size - text_height) / 2), element.name, font=font, fill=(0, 0, 0))
     image.save(image_path)
 
 

@@ -25,7 +25,7 @@ class User(Entity):
     NAME = "user"
     logger = getLogger(NAME)
 
-    def __init__(self, name: str = None, plain_password: str = None, to_save=True, storage=config.get_storage(),
+    def __init__(self, name: str = None, plain_password: str = None, storage=config.get_storage(),
                  **kwargs):
         super().__init__(name=name, **kwargs)
 
@@ -36,11 +36,11 @@ class User(Entity):
 
         self.game_uuid = None
 
-    def change(self, name=None, plain_password=None, to_save=True, **kwargs) -> None:
+    def change(self, name=None, plain_password=None, **kwargs) -> None:
         if plain_password:
             self.password = self.hash_password(plain_password)
 
-        super().change(name, to_save=to_save, **kwargs)
+        super().change(name, **kwargs)
 
     @staticmethod
     def hash_password(plain_password: str) -> bytes:

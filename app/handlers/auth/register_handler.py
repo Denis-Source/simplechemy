@@ -10,7 +10,7 @@ class RegisterHandler(BaseHandler):
     logger = getLogger(NAME)
 
     def post(self) -> None:
-        self.logger.debug("registering new user")
+        self.logger.info("registering new user")
         password = self.get_argument("password")
         name = self.get_argument("name", None)
 
@@ -24,4 +24,4 @@ class RegisterHandler(BaseHandler):
 
         self.set_current_user(event.instance)
         self.write(event.as_dict())
-        self.logger.debug(f"{event.instance} registered")
+        self.logger.info(f"{event.instance} registered")

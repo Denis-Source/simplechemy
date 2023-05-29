@@ -23,7 +23,7 @@ class Routes(str, Enum):
 
     ping = r"/ping",
     room = r"/room",
-    ws = r"/ws"
+    ws = r"/"
 
 
 class App(Application):

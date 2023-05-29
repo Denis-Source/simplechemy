@@ -17,6 +17,20 @@ class TestRegistration(BaseAPITest):
         assert response.json()["instance"]["type"] == "user"
 
     @pytest.mark.usefixtures("app")
+    def test_registration_with_name_success(self):
+        name = "test name"
+
+        response = requests.post(
+            f"{config.get_api_url()}{Routes.register}",
+            {
+                "name": name,
+                "password": "password"
+             }
+        )
+        assert response.status_code == 200
+        assert response.json()["instance"]["name"] == name
+
+    @pytest.mark.usefixtures("app")
     def test_registration_no_password(self):
         response = requests.post(
             f"{config.get_api_url()}{Routes.register}",

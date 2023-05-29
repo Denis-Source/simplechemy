@@ -16,6 +16,17 @@ class BaseHandler(RequestHandler):
 
     logger = getLogger(NAME)
 
+    def set_default_headers(self):
+        # TODO provide specific domains
+        self.set_header("Access-Control-Allow-Origin", "*")
+        self.set_header("Access-Control-Allow-Headers", "x-requested-with")
+        self.set_header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
+        self.set_header("Access-Control-Allow-Headers", "access-control-allow-origin,authorization,content-type")
+
+    def options(self):
+        self.set_status(200)
+        self.finish()
+
     def write_error(self, status_code: int, **kwargs) -> None:
         _, error, _ = sys.exc_info()
         if hasattr(error, "log_message"):

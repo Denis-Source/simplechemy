@@ -13,7 +13,7 @@ class LoginHandler(BaseHandler):
     logger = getLogger(NAME)
 
     def post(self) -> None:
-        self.logger.debug("logging user")
+        self.logger.info("logging user")
 
         user_uuid = self.get_argument("user_uuid")
         password = self.get_argument("password")
@@ -25,16 +25,16 @@ class LoginHandler(BaseHandler):
         )
         event = self.application.message_bus.handle(cmd)
         if isinstance(event, InstanceNotExistEvent):
-            self.logger.debug("user not found")
+            self.logger.info("user not found")
             raise HTTPError(404)
 
         if event.is_correct:
-            self.logger.debug(f"{event.instance} is verified")
+            self.logger.info(f"{event.instance} is verified")
             token = encode_jwt(event.instance.uuid)
             self.write(
                 event.as_dict() |
                 {"token": token}
             )
         else:
-            self.logger.debug(f"{event.instance} is not verified")
+            self.logger.info(f"{event.instance} is not verified")
             raise HTTPError(401)

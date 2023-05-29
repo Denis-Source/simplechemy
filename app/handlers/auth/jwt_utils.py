@@ -28,7 +28,7 @@ def jwt_authenticated(method):
     @functools.wraps(method)
     def wrapper(self: RequestHandler, *args, **kwargs):
         try:
-            logger.debug(f"authorizing request ({id(self)})")
+            logger.debug(f"authenticating request ({id(self)})")
             header = self.request.headers.get("Authorization")
 
             user_uuid = decode_header(header)
@@ -37,36 +37,12 @@ def jwt_authenticated(method):
 
             if isinstance(event, ModelGotEvent):
                 self.current_user = event.instance
-                logger.debug(f"request is authorized ({id(self)})")
+                logger.debug(f"request is authenticated ({id(self)})")
                 return method(self, *args, **kwargs)
             else:
                 raise DecodeError
         except (DecodeError, InvalidTokenError):
             raise HTTPError(401)
-
-    return wrapper
-
-
-def jwt_authenticated_ws(method):
-    @functools.wraps(method)
-    def wrapper(self: RequestHandler, *args, **kwargs):
-        try:
-            logger.debug(f"authorizing request ({id(self)})")
-            header = self.request.headers.get("Authorization")
-
-            user_uuid = decode_header(header)
-            cmd = ModelGetCommand(user_uuid, User.NAME)
-            event = self.application.message_bus.handle(cmd)
-
-            if isinstance(event, ModelGotEvent):
-                self.current_user = event.instance
-                logger.debug(f"request is authorized ({id(self)})")
-                return method(self, *args, **kwargs)
-            else:
-                raise DecodeError
-        except (DecodeError, InvalidTokenError):
-            logger.debug(f"request is not authorized ({id(self)})")
-            self.close(3000)
 
     return wrapper
 
